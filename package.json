@@ -9,5 +9,20 @@
         "axios": "^1.1.2",
         "laravel-vite-plugin": "^0.8.0",
         "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.11.1",
+        "@emotion/styled": "^11.11.0",
+        "@mui/icons-material": "^5.14.7",
+        "@mui/material": "^5.14.7",
+        "@vitejs/plugin-react": "^4.0.4",
+        "mobx": "^6.10.2",
+        "mobx-react-lite": "^4.0.4",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^6.15.0",
+        "react-slick": "^0.29.0",
+        "sass": "^1.66.1",
+        "slick-carousel": "^1.8.1"
     }
 }

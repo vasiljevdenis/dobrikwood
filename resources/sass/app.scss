@@ -1,0 +1,33 @@
+@font-face {
+    font-family: 'FuturaPTDemi';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 400;
+    src: url(../fonts/FuturaPTDemi.woff) format('woff');
+  }
+  
+  @font-face {
+    font-family: 'Helvetica';
+    font-style: normal;
+    font-display: swap;
+    font-weight: 400;
+    src: url(../fonts/HelveticaNeueCyr-Roman.woff) format('woff');
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  @keyframes btn-highlight {
+    0% {
+        left: -75px
+    }
+  
+    20% {
+        left: 120%
+    }
+  
+    to {
+        left: 120%
+    }
+  }
