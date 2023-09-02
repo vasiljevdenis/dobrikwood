@@ -2,7 +2,7 @@
 import style from '../sass/app.scss'
 
 import ReactDOM from 'react-dom/client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { CssBaseline, Grid, ThemeProvider, createTheme } from '@mui/material';
 import Home from './Pages/Home';
@@ -16,9 +16,7 @@ import Horizontalbar from './Components/Horizontalbar';
 import Catalog from './Pages/Catalog';
 import Category from './Pages/Category';
 import Product from './Pages/Product';
-import appState from './store/appState';
-import { observer } from "mobx-react-lite";
-import axios from 'axios';
+import AppState from './store/AppState';
 
 const newTheme = createTheme({
   palette: {
@@ -56,26 +54,6 @@ const newTheme = createTheme({
     }
   }
 });
-
-const AppState = observer(() => {
-
-  const [store] = useState(appState);
-
-  useEffect(() => {
-    axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog')
-        .then(res => {
-          console.log(res);
-          let json = res.data;
-          store.changeCategories(json);
-        })
-        .catch(err => {
-        })
-        .finally(() => {            
-        });
-  }, []);
-
-});
-export default AppState;
 
 ReactDOM.createRoot(document.getElementById('app')).render(
   <BrowserRouter>

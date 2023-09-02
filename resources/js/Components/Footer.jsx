@@ -15,8 +15,12 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import appState from '../store/appState';
+import { observer } from 'mobx-react-lite';
 
-export default function Footer() {
+const Footer = observer(() => {
+
+  const [store] = React.useState(appState);
 
   const listItemStyle = {
     color: '#212529',
@@ -69,87 +73,45 @@ export default function Footer() {
           </Tooltip>
         </Stack>
         <Link variant='body1' underline="none" href="tel:+79196628330" sx={{
-              color: 'white',
-              background: '#60a47c',
-              padding: 1,
-              borderRadius: '4px'
-            }}>
-              <LocalPhoneIcon sx={{
-                verticalAlign: 'sub'
-              }} />
-              &nbsp;
-              <Typography variant="h6" component="span" color="white" sx={{
-                display: 'inline-block'
-              }}>
-                +7 919 662 83 30
-              </Typography>
-            </Link>
+          color: 'white',
+          background: '#60a47c',
+          padding: 1,
+          borderRadius: '4px'
+        }}>
+          <LocalPhoneIcon sx={{
+            verticalAlign: 'sub'
+          }} />
+          &nbsp;
+          <Typography variant="h6" component="span" color="white" sx={{
+            display: 'inline-block'
+          }}>
+            +7 919 662 83 30
+          </Typography>
+        </Link>
       </Grid>
       <Grid item xs={12} md={3} textAlign={'left'} sx={{ display: { xs: 'none', md: 'block' } }}>
         <Typography variant="h6" component="p" pl={2} sx={{ fontFamily: 'Helvetica, sans-serif', color: 'rgba(0, 0, 0, 0.5)' }}>
           Каталог
         </Typography>
         <List dense={false} sx={{ p: 0 }}>
-          <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
-              <ListItemText
-                primary="Лошадки-качалки"
-                sx={{
-                  "& span": {
-                    fontFamily: 'FuturaPTDemi, sans-serif'
-                  }
-                }}
-              />
-            </Link>
-          </ListItem>
-          <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
-              <ListItemText
-                primary="Столы и стулья"
-                sx={{
-                  "& span": {
-                    fontFamily: 'FuturaPTDemi, sans-serif'
-                  }
-                }}
-              />
-            </Link>
-          </ListItem>
-          <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
-              <ListItemText
-                primary="Комоды и стеллажи"
-                sx={{
-                  "& span": {
-                    fontFamily: 'FuturaPTDemi, sans-serif'
-                  }
-                }}
-              />
-            </Link>
-          </ListItem>
-          <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
-              <ListItemText
-                primary="Тумбочки"
-                sx={{
-                  "& span": {
-                    fontFamily: 'FuturaPTDemi, sans-serif'
-                  }
-                }}
-              />
-            </Link>
-          </ListItem>
-          <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
-              <ListItemText
-                primary="Игрушки"
-                sx={{
-                  "& span": {
-                    fontFamily: 'FuturaPTDemi, sans-serif'
-                  }
-                }}
-              />
-            </Link>
-          </ListItem>
+          {
+            store.allCategories.map((el, i) => {
+              return (
+                <ListItem key={'category' + i} sx={listItemStyle}>
+                  <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to={"/catalog/" + el.path} underline="none">
+                    <ListItemText
+                      primary={el.name}
+                      sx={{
+                        "& span": {
+                          fontFamily: 'FuturaPTDemi, sans-serif'
+                        }
+                      }}
+                    />
+                  </Link>
+                </ListItem>
+              );
+            })
+          }
           <ListItem sx={listItemStyle}>
             <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
               <ListItemText
@@ -165,7 +127,7 @@ export default function Footer() {
         </List>
       </Grid>
       <Grid item xs={12} md={3} textAlign={'left'} sx={{ display: { xs: 'none', md: 'block' } }}>
-      <Typography variant="h6" component="p" pl={2} sx={{ fontFamily: 'Helvetica, sans-serif', color: 'rgba(0, 0, 0, 0.5)' }}>
+        <Typography variant="h6" component="p" pl={2} sx={{ fontFamily: 'Helvetica, sans-serif', color: 'rgba(0, 0, 0, 0.5)' }}>
           Навигация
         </Typography>
         <List dense={false} sx={{ p: 0 }}>
@@ -216,7 +178,7 @@ export default function Footer() {
                 }}
               />
             </Link>
-          </ListItem>          
+          </ListItem>
           <ListItem sx={listItemStyle}>
             <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
               <ListItemText
@@ -228,35 +190,36 @@ export default function Footer() {
                 }}
               />
             </Link>
-          </ListItem>          
+          </ListItem>
         </List>
       </Grid>
       <Grid item xs={12} md={3} textAlign={'center'}>
-      <Stack spacing={{ xs: 1, sm: 2 }} justifyContent={'center'} direction="row" useFlexGap flexWrap="wrap">
+        <Stack spacing={{ xs: 1, sm: 2 }} justifyContent={'center'} direction="row" useFlexGap flexWrap="wrap">
           <Tooltip title="МИР" disableInteractive placement="top-start">
-            <img src={mir} alt="МИР" style={{width: '100%', maxWidth: '80px'}} />
+            <img src={mir} alt="МИР" style={{ width: '100%', maxWidth: '80px' }} />
           </Tooltip>
           <Tooltip title="VISA" disableInteractive placement="top-start">
-            <img src={visa} alt="VISA" style={{width: '100%', maxWidth: '80px'}} />
+            <img src={visa} alt="VISA" style={{ width: '100%', maxWidth: '80px' }} />
           </Tooltip>
           <Tooltip title="MasterCard" disableInteractive placement="top-start">
-            <img src={mastercard} alt="MasterCard" style={{width: '100%', maxWidth: '80px'}} />
+            <img src={mastercard} alt="MasterCard" style={{ width: '100%', maxWidth: '80px' }} />
           </Tooltip>
           <Tooltip title="UnionPay" disableInteractive placement="top-start">
-            <img src={unionpay} alt="UnionPay" style={{width: '100%', maxWidth: '80px'}} />
+            <img src={unionpay} alt="UnionPay" style={{ width: '100%', maxWidth: '80px' }} />
           </Tooltip>
           <Tooltip title="JCB" disableInteractive placement="top-start">
-            <img src={jcb} alt="JCB" style={{width: '100%', maxWidth: '80px'}} />
+            <img src={jcb} alt="JCB" style={{ width: '100%', maxWidth: '80px' }} />
           </Tooltip>
           <Tooltip title="СБП" disableInteractive placement="top-start">
-            <img src={sbp} alt="СБП" style={{width: '100%', maxWidth: '80px'}} />
+            <img src={sbp} alt="СБП" style={{ width: '100%', maxWidth: '80px' }} />
           </Tooltip>
         </Stack>
         <br />
         <Link variant='body2' sx={{ color: '#212529' }} justifyContent={'center'} component={RouterLink} to="/" underline="none">
-        Политика обработки персональных данных
-            </Link>
+          Политика обработки персональных данных
+        </Link>
       </Grid>
     </Grid>
   );
-}
+});
+export default Footer;

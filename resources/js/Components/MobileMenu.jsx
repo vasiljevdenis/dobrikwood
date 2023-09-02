@@ -14,8 +14,13 @@ import BorderAllIcon from '@mui/icons-material/BorderAll';
 import StorageIcon from '@mui/icons-material/Storage';
 import CategoryIcon from '@mui/icons-material/Category';
 import KingBedIcon from '@mui/icons-material/KingBed';
+import WeekendIcon from '@mui/icons-material/Weekend';
+import { observer } from "mobx-react-lite";
+import appState from "../store/appState";
 
-const MobileMenu = () => {
+const MobileMenu = observer(() => {
+
+    const [store] = React.useState(appState);
 
     const [state, setState] = React.useState(false);
 
@@ -65,36 +70,12 @@ const MobileMenu = () => {
     ];
 
     const categories = [
-        {
-            title: 'Лошадки-качалки',
-            url: '/',
-            icon: <BedroomBabyIcon />
-        },
-        {
-            title: 'Столы и стулья',
-            url: '',
-            icon: <EventSeatIcon />
-        },
-        {
-            title: 'Комоды и стеллажи',
-            url: '',
-            icon: <BorderAllIcon />
-        },
-        {
-            title: 'Тумбочки',
-            url: '',
-            icon: <StorageIcon />
-        },
-        {
-            title: 'Игрушки',
-            url: '',
-            icon: <CategoryIcon />
-        },
-        {
-            title: 'Мебель на заказ',
-            url: '',
-            icon: <KingBedIcon />
-        }
+        <BedroomBabyIcon />,
+        <EventSeatIcon />,
+        <BorderAllIcon />,
+        <StorageIcon />,
+        <CategoryIcon />,
+        <KingBedIcon />
     ];
 
     const list = () => (
@@ -126,15 +107,15 @@ const MobileMenu = () => {
             </List>
             <Divider />
             <List>
-                {categories.map((el, index) => (
-                    <ListItem key={el + index} disablePadding component={RouterLink} to={el.url}>
+                {store.allCategories.map((el, index) => (
+                    <ListItem key={'categorynav' + index} disablePadding component={RouterLink} to={"/catalog/" + el.path}>
                         <ListItemButton>
                             <ListItemIcon sx={{
                                 color: '#60a47c'
                             }}>
-                                {el.icon}
+                                {categories[index]}
                             </ListItemIcon>
-                            <ListItemText primary={el.title} sx={{
+                            <ListItemText primary={el.name} sx={{
                                 color: '#212529',
                                 textTransform: 'uppercase',
                                 "& span": {
@@ -144,6 +125,22 @@ const MobileMenu = () => {
                         </ListItemButton>
                     </ListItem>
                 ))}
+                <ListItem disablePadding component={RouterLink} to={"/catalog/"}>
+                    <ListItemButton>
+                        <ListItemIcon sx={{
+                            color: '#60a47c'
+                        }}>
+                            {<WeekendIcon />}
+                        </ListItemIcon>
+                        <ListItemText primary={'Мебель на заказ'} sx={{
+                            color: '#212529',
+                            textTransform: 'uppercase',
+                            "& span": {
+                                fontFamily: 'FuturaPTDemi, sans-serif'
+                            }
+                        }} />
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Box>
     );
@@ -175,6 +172,5 @@ const MobileMenu = () => {
             </SwipeableDrawer>
         </>
     )
-};
-
+});
 export default MobileMenu;

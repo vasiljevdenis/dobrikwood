@@ -19,5 +19,17 @@ Route::get('/api/catalog', function () {
     return $json;
 });
 
+Route::get('/api/catalog/{category}', function ($category) {
+    if ($category) {
+        $res = DB::select('select * from catalog where category = :category', 
+        ['category' => $category]);
+    if (isset($res)) {
+        return $res;
+    } else {
+        return '[]';
+    }
+    }
+});
+
 Route::view('/{path}', 'welcome')
     ->where('path', '.*');
