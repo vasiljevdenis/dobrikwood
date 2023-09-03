@@ -12,7 +12,6 @@ class appState {
     this.categories = values;
   }
 
-
   get allCategories() {
     return this.categories;
   }

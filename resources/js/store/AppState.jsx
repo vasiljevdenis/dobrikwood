@@ -10,7 +10,6 @@ const AppState = observer(() => {
     React.useEffect(() => {
       axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog')
           .then(res => {
-            console.log(res);
             let json = res.data;
             store.changeCategories(json);
           })

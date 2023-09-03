@@ -1,103 +1,91 @@
-import { Card, CardActionArea, CardContent, CardMedia, Divider, Grid, Rating, Typography } from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, Divider, Grid, LinearProgress, Rating, Typography } from "@mui/material";
 import * as React from "react";
-import { Link as RouterLink } from 'react-router-dom';
-import img1 from '../../images/loshadki-kachalki.jpg';
-import img2 from '../../images/stoly-stulya.jpg';
-import img3 from '../../images/comody-stellazhi.jpg';
-import img4 from '../../images/igrushki.jpg';
+import { Link as RouterLink, useParams } from 'react-router-dom';
+import axios from "axios";
+import { observer } from "mobx-react-lite";
+import appState from "../store/appState";
 
-const Category = () => {
+const Category = observer(() => {
+
+    const [store] = React.useState(appState);
 
     const [goods, setGoods] = React.useState([]);
 
-    const { categoryName } = React.useParams();
-  
+    const [category, setCategory] = React.useState('');
+
+    const [progress, setProgress] = React.useState(true);
+
+    const { categoryName } = useParams();
+
     React.useEffect(() => {
-      axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName)
-          .then(res => {
-            let json = res.data;
-            setGoods(json);
-          })
-          .catch(err => {
-          })
-          .finally(() => {            
-          });
+        setProgress(true);
+        axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName)
+            .then(res => {
+                let json = res.data;
+                setGoods(json);
+                setProgress(false);
+            })
+            .catch(err => {
+            })
+            .finally(() => {
+            });
     }, [categoryName]);
 
-    return (
-        <Grid container p={1} textAlign={'center'}>
-             {
-                store.allCategories.map((el, i) => {
-                    return (
-                        <Grid key={'product' + i} item xs={12} sm={6} md={4} p={1} textAlign={'center'}>
-                        <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
-                            <Card sx={{ maxWidth: 345, mx: 'auto' }}>
-                                <CardActionArea>
-                                    <CardMedia
-                                        component="img"
-                                        height="250"
-                                        image={el.img1}
-                                        alt="green iguana"
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
-                                            {el.name}
-                                        </Typography>
-                                        <Divider />
-                                        <Rating name="read-only" value={4} readOnly />
-                                        <p style={{textAlign: 'right'}}>
-                                        <Typography variant="subtitle2" component="span" gutterBottom sx={{
-                                            color: 'rgba(0, 0, 0, 0.5)',
-                                            p: 1
-                                        }}><del>{el.lastPrice === 0 ? '' : el.lastPrice.replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
-                                        <Typography variant="h6" component="span" gutterBottom sx={{
-                                            color: 'white',
-                                            background: '#60a47c',
-                                            p: 1
-                                        }}>{el.price === 0 ? '' : el.price.replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
-                                        </p>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                        </RouterLink>
-                    </Grid>
-                    );
-                })
-            }
-            <Grid item xs={12} sm={6} md={4} p={1} textAlign={'center'}>
-                <RouterLink style={{ textDecoration: 'none' }} to={'/product'}>
-                    <Card sx={{ maxWidth: 345, mx: 'auto' }}>
-                        <CardActionArea>
-                            <CardMedia
-                                component="img"
-                                height="250"
-                                image={img4}
-                                alt="green iguana"
-                            />
-                            <CardContent>
-                                <Typography gutterBottom variant="h5" component="div">
-                                    Лошадки-качалки
-                                </Typography>
-                                <Divider />
-                                <Rating name="read-only" value={4} readOnly />
-                                <p style={{textAlign: 'right'}}>
-                                <Typography variant="subtitle2" component="span" gutterBottom sx={{
-                                    color: 'rgba(0, 0, 0, 0.5)',
-                                    p: 1
-                                }}><del>1 790 Р</del></Typography>
-                                <Typography variant="h6" component="span" gutterBottom sx={{
-                                    color: 'white',
-                                    background: '#60a47c',
-                                    p: 1
-                                }}>1 790 ₽</Typography>
-                                </p>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
-                </RouterLink>
-            </Grid>
-        </Grid>
-    )
-};
+    React.useEffect(() => {
+        const c = [...store.allCategories].find(el => el.path === categoryName);
+        setCategory(c ? c.name : '');
+    }, [store.allCategories, categoryName]);
 
+    return (
+        <>
+            {progress ? (<LinearProgress color="primary" />) : (
+                <>
+                    <Typography variant="h4" component="h2" m={2}>
+                        {category}
+                    </Typography>
+                    <Grid container p={1} textAlign={'center'}>
+                        {
+                            goods.map((el, i) => {
+                                return (
+                                    <Grid key={'product' + i} item xs={12} sm={6} md={4} p={1} textAlign={'center'}>
+                                        <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
+                                            <Card sx={{ maxWidth: 345, mx: 'auto' }}>
+                                                <CardActionArea>
+                                                    <CardMedia
+                                                        component="img"
+                                                        height="250"
+                                                        image={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg'}
+                                                        alt="green iguana"
+                                                    />
+                                                    <CardContent>
+                                                        <Typography gutterBottom variant="h5" component="div">
+                                                            {el.name}
+                                                        </Typography>
+                                                        <Divider />
+                                                        <Rating name="read-only" value={4} readOnly />
+                                                        <p style={{ textAlign: 'right' }}>
+                                                            <Typography variant="subtitle2" component="span" gutterBottom sx={{
+                                                                color: 'rgba(0, 0, 0, 0.5)',
+                                                                p: 1
+                                                            }}><del>{el.lastPrice === 0 ? '' : el.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
+                                                            <Typography variant="h6" component="span" gutterBottom sx={{
+                                                                color: 'white',
+                                                                background: '#60a47c',
+                                                                p: 1
+                                                            }}>{el.price === 0 ? '' : el.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
+                                                        </p>
+                                                    </CardContent>
+                                                </CardActionArea>
+                                            </Card>
+                                        </RouterLink>
+                                    </Grid>
+                                );
+                            })
+                        }
+                    </Grid>
+                </>
+            )}
+        </>
+    )
+});
 export default Category;

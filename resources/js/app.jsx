@@ -65,7 +65,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
         <Grid item md={3} sx={{ display: { xs: 'none', md: 'block' }, background: '#f8f3ef' }} textAlign={'center'}>
           <Sidebar />
         </Grid>
-        <Grid item xs={12} md={9}>
+        <Grid item xs={12} md={9} minHeight={500}>
           <Horizontalbar />
           <Routes>
             <Route path='/' element={<Home />} />
