@@ -33,7 +33,7 @@ Route::get('/api/catalog/{category}', function ($category) {
 
 Route::get('/api/catalog/{category}/{product}', function ($category, $product) {
     if ($category) {
-        $res = DB::select('select * from catalog where category = :category, path = :product', 
+        $res = DB::select('select * from catalog where category = :category AND path = :product', 
         ['category' => $category, 'product' => $product]);
     if (isset($res)) {
         return $res;
