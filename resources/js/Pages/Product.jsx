@@ -18,6 +18,8 @@ const Product = () => {
 
     const [progress, setProgress] = React.useState(true);
 
+    const [count, setCount] = React.useState(0);
+
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
@@ -47,7 +49,7 @@ const Product = () => {
                             <CardContent>
                                 <Grid container>
                                     <Grid item xs={12} md={6} p={1} textAlign={'center'}>
-                                        <img src={img4} alt="" style={{ width: '100%' }} />
+                                        <img src={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '1.jpg'} alt="" style={{ width: '100%' }} />
                                     </Grid>
                                     <Grid item xs={12} md={6} p={1}>
                                         <Typography gutterBottom variant="h4" component="h1">
@@ -61,25 +63,26 @@ const Product = () => {
                                                 color: 'white',
                                                 background: '#60a47c',
                                                 p: 1
-                                            }}>1 790 ₽</Typography>
+                                            }}>{product.price === 0 ? '' : product.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
                                             <Typography variant="subtitle1" component="span" gutterBottom sx={{
                                                 color: 'rgba(0, 0, 0, 0.5)',
                                                 p: 1,
                                                 my: 1
-                                            }}><del>1 790 Р</del></Typography>
+                                            }}><del>{product.lastPrice === 0 ? '' : product.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
                                         </p>
-                                        <Button sx={{ color: 'white', my: 1 }} variant="contained" startIcon={<AddShoppingCartIcon />}>
+                                        <Button sx={{ color: 'white', my: 1, display: count > 0 ? 'none' : 'inline-flex' }} variant="contained" startIcon={<AddShoppingCartIcon />} onClick={() => setCount(1)}>
                                             В корзину
                                         </Button>
-                                        <Box>
+                                        <Box display={count > 0 ? 'block' : 'none'}>
                                             <IconButton color="primary" aria-label="Minus button">
                                                 <RemoveCircleIcon />
                                             </IconButton>
                                             <Typography variant="h6" component="span" gutterBottom sx={{
                                                 border: '1px solid rgba(0,0,0,0.14)',
                                                 px: 1.5,
-                                                py: 0.1
-                                            }}>1</Typography>
+                                                py: 0.1,
+                                                verticalAlign: 'middle'
+                                            }}>{count}</Typography>
                                             <IconButton color="primary" aria-label="Plus button">
                                                 <AddCircleIcon />
                                             </IconButton>
@@ -109,10 +112,9 @@ const Product = () => {
                                                 </Typography>
                                             </AccordionSummary>
                                             <AccordionDetails>
-                                                <Typography>
-                                                    Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat.
-                                                    Aliquam eget maximus est, id dignissim quam.
-                                                </Typography>
+                                                <Typography dangerouslySetInnerHTML={{
+                                                    __html: product.description
+                                                }}></Typography>
                                             </AccordionDetails>
                                         </Accordion>
                                     </Grid>
