@@ -62,7 +62,7 @@ const Category = observer(() => {
                                                             {el.name}
                                                         </Typography>
                                                         <Divider />
-                                                        <Rating name="read-only" value={4} readOnly />
+                                                        <Rating name="read-only" value={el.rate} readOnly />
                                                         <p style={{ textAlign: 'right' }}>
                                                             <Typography variant="subtitle2" component="span" gutterBottom sx={{
                                                                 color: 'rgba(0, 0, 0, 0.5)',

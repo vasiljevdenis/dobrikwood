@@ -20,6 +20,8 @@ const Product = () => {
 
     const [count, setCount] = React.useState(0);
 
+    const [rate, setRate] = React.useState(0);
+
     const handleChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
@@ -32,6 +34,7 @@ const Product = () => {
             .then(res => {
                 let json = res.data[0];
                 setProduct(json);
+                setRate(product.rate);
                 setProgress(false);
             })
             .catch(err => {
@@ -39,6 +42,22 @@ const Product = () => {
             .finally(() => {
             });
     }, [categoryName, productName]);
+
+    const changeRate = (newValue) => {
+        axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName + '/' + productName + '/rate',
+            {
+                id: product.id,
+                rate: newValue
+            })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+            .finally(() => {
+            });
+    }
 
     return (
         <>
@@ -93,6 +112,7 @@ const Product = () => {
                                         <Typography sx={{ color: 'rgba(0, 0, 0, 0.5)' }} variant="body2" display="block" gutterBottom>
                                             <PersonOutlinedIcon sx={{ verticalAlign: 'sub' }} fontSize="small" /> Самовывоз из г. Чебоксары
                                         </Typography>
+                                        <Rating name="product-rate" value={product.rate} onChange={(evenet, newValue) => changeRate(newValue)} />
                                     </Grid>
                                     <Grid item xs={12} p={1}>
                                         <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')} sx={{

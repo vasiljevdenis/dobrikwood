@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,18 @@ Route::get('/api/catalog/{category}/{product}', function ($category, $product) {
         return '[]';
     }
     }
+});
+
+Route::post('/api/catalog/{category}/{product}/rate', function (Request $request) {
+    $id = $request->input('id');
+    $rate = $request->input('rate');
+    $rate_history = DB::select('select rate_history from catalog where id = :id', ['id' => $id]);
+    $rate_history = json_decode($rate_history[0]);
+    array_push($rate_history, $rate);
+    $newRate = array_sum($rate_history)/count($rate_history);
+    $newRate = ceil($newRate);
+    $json = DB::update('update catalog set rate = :rate, rate_history = :rateHistory where id = :id', ['rate' => $newRate, 'rateHistory' => json_encode($rate_history), 'id' => $id]);
+    return $json;
 });
 
 Route::view('/{path}', 'welcome')
