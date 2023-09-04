@@ -48,7 +48,7 @@ Route::post('/api/catalog/{category}/{product}/rate', function (Request $request
     $id = $request->input('id');
     $rate = $request->input('rate');
     $rate_history = DB::select('select rate_history from catalog where id = :id', ['id' => $id]);
-    $rate_history = json_decode($rate_history[0]);
+    $rate_history = json_decode($rate_history[0]->rate_history);
     array_push($rate_history, $rate);
     $newRate = array_sum($rate_history)/count($rate_history);
     $newRate = ceil($newRate);

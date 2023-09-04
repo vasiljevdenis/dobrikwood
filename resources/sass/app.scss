@@ -31,3 +31,18 @@
         left: 120%
     }
   }
+
+  .slick-prev {
+    left: 5px;
+  }
+  .slick-next {
+    right: 5px;
+  }
+  .slick-prev, 
+  .slick-next {
+    z-index: 10;
+  }
+  .slick-prev:before, 
+  .slick-next:before {
+    color: black;
+  }

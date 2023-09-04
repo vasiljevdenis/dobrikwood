@@ -9,8 +9,13 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import img4 from '../../images/igrushki.jpg';
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import Carousel from "../Components/Carousel";
+import appState from "../store/appState";
+import { observer } from "mobx-react-lite";
 
-const Product = () => {
+const Product = observer(() => {
+
+    const [store] = React.useState(appState);
 
     const [expanded, setExpanded] = React.useState('panel1');
 
@@ -35,6 +40,7 @@ const Product = () => {
                 let json = res.data[0];
                 setProduct(json);
                 setRate(product.rate);
+                setCount(JSON.parse(localStorage.getItem('cart'))?.goods[json.id]?.count || 0);
                 setProgress(false);
             })
             .catch(err => {
@@ -59,6 +65,67 @@ const Product = () => {
             });
     }
 
+    const cart = JSON.parse(localStorage.getItem('cart')) || {
+        updated_at: new Date(),
+        cartTotal: 0,
+        goods: {}
+    };
+
+    // Функция для обновления корзины в localStorage
+    const updateCart = () => {
+        cart.updated_at = new Date();
+        const cartTotal = Object.values(cart.goods).map(item => item.totalPrice).reduce((a, b) => a + b, 0);
+        cart.cartTotal = cartTotal;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        store.changeCartTotal(cartTotal);
+        console.log(cart);
+    };
+
+    // Обработчик клика на кнопке "Добавить в корзину"
+    const addToCart = (productId) => {
+        if (cart.goods[productId]) {
+            cart.goods[productId].count++;
+            cart.goods[productId].price = product.price;
+            cart.goods[productId].totalPrice += product.price;
+        } else {
+            cart.goods[productId] = {};
+            cart.goods[productId].count = 1;
+            cart.goods[productId].price = product.price;
+            cart.goods[productId].totalPrice = product.price;
+        }
+        updateCart();
+        setCount(1);
+    };
+
+    // Обработчик клика на кнопке "Удалить"
+    const removeFromCart = (productId) => {
+        delete cart.goods[productId];
+        updateCart();
+        setCount(0);
+    };
+
+    // Обработчик клика на кнопке "Минус"
+    const decreaseQuantity = (productId) => {
+        if (cart.goods[productId].count >= 2) {
+            cart.goods[productId].count--;
+            cart.goods[productId].price = product.price;
+            cart.goods[productId].totalPrice -= product.price;
+            updateCart();
+            setCount(count - 1);
+        } else {
+            removeFromCart(productId);
+        }
+    };
+
+    // Обработчик клика на кнопке "Плюс"
+    const increaseQuantity = (productId) => {
+        cart.goods[productId].count++;
+        cart.goods[productId].price = product.price;
+        cart.goods[productId].totalPrice += product.price;
+        updateCart();
+        setCount(count + 1);
+    };
+
     return (
         <>
             {progress ? (<LinearProgress color="primary" />) : (
@@ -67,8 +134,21 @@ const Product = () => {
                         <Card sx={{ width: '100%', mx: 'auto' }}>
                             <CardContent>
                                 <Grid container>
-                                    <Grid item xs={12} md={6} p={1} textAlign={'center'}>
-                                        <img src={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '1.jpg'} alt="" style={{ width: '100%' }} />
+                                    <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: window.innerWidth < 900 ? '100vw' : '75vw' }}>
+                                        <Carousel items={[
+                                            {
+                                                image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '1.jpg',
+                                                link: '#'
+                                            },
+                                            {
+                                                image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '2.jpg',
+                                                link: '#'
+                                            },
+                                            {
+                                                image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '3.jpg',
+                                                link: '#'
+                                            }
+                                        ]} dots={true} />
                                     </Grid>
                                     <Grid item xs={12} md={6} p={1}>
                                         <Typography gutterBottom variant="h4" component="h1">
@@ -89,11 +169,11 @@ const Product = () => {
                                                 my: 1
                                             }}><del>{product.lastPrice === 0 ? '' : product.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
                                         </p>
-                                        <Button sx={{ color: 'white', my: 1, display: count > 0 ? 'none' : 'inline-flex' }} variant="contained" startIcon={<AddShoppingCartIcon />} onClick={() => setCount(1)}>
+                                        <Button sx={{ color: 'white', my: 1, display: count > 0 ? 'none' : 'inline-flex' }} variant="contained" startIcon={<AddShoppingCartIcon />} onClick={() => addToCart(product.id)}>
                                             В корзину
                                         </Button>
                                         <Box display={count > 0 ? 'block' : 'none'}>
-                                            <IconButton color="primary" aria-label="Minus button">
+                                            <IconButton color="primary" aria-label="Minus button" onClick={() => decreaseQuantity(product.id)}>
                                                 <RemoveCircleIcon />
                                             </IconButton>
                                             <Typography variant="h6" component="span" gutterBottom sx={{
@@ -102,7 +182,7 @@ const Product = () => {
                                                 py: 0.1,
                                                 verticalAlign: 'middle'
                                             }}>{count}</Typography>
-                                            <IconButton color="primary" aria-label="Plus button">
+                                            <IconButton color="primary" aria-label="Plus button" onClick={() => increaseQuantity(product.id)}>
                                                 <AddCircleIcon />
                                             </IconButton>
                                         </Box>
@@ -114,7 +194,7 @@ const Product = () => {
                                         </Typography>
                                         <Rating name="product-rate" value={product.rate} onChange={(evenet, newValue) => changeRate(newValue)} />
                                     </Grid>
-                                    <Grid item xs={12} p={1}>
+                                    <Grid item xs={12} p={1} mt={2}>
                                         <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')} sx={{
                                             border: '1px solid rgba(0,0,0,0.14)',
                                             boxShadow: 'none'
@@ -146,6 +226,5 @@ const Product = () => {
             )}
         </>
     )
-};
-
+});
 export default Product;

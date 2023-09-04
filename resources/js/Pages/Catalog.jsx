@@ -1,10 +1,6 @@
 import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink } from 'react-router-dom';
-import img1 from '../../images/loshadki-kachalki.jpg';
-import img2 from '../../images/stoly-stulya.jpg';
-import img3 from '../../images/comody-stellazhi.jpg';
-import img4 from '../../images/igrushki.jpg';
 import { observer } from "mobx-react-lite";
 import appState from "../store/appState";
 

@@ -1,59 +1,61 @@
-// import axios from "axios";
 import * as React from "react";
 import { useState } from "react";
-// import { useEffect } from "react";
 import Slider from "react-slick";
+import { Link as RouterLink } from 'react-router-dom';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Box, Link } from "@mui/material";
 
 const Carousel = (props) => {
 
   const settings = {
     slidesToShow: 1,
     slidesToScroll: 1,
-    dots: false,
+    arrows: props.arrows,
+    dots: props.dots,
     infinite: true,
     cssEase: 'linear',
-    variableWidth: true,
+    variableWidth: false,
     variableHeight: true,
     speed: 500,
-    autoplay: true,
+    autoplay: props.autoplay,
     autoplaySpeed: 5000,
     adaptiveHeight: true
   };
 
   const [slider, setSlider] = useState(props.items);
 
-
-  // useEffect(() => {
-  //   axios.get(import.meta.env.VITE_APP_BASE_URL + `/api/slider`)
-  //     .then(res => {
-  //       let json = res.data;
-  //       json.sort((a, b) => a.priority - b.priority);
-  //       setSlider(json);
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     })
-  //     .finally(() => {
-  //     });
-  // }, []);
-
   return (
     <Slider {...settings}>
       {slider.map((item, i) => (
-        <div key={'slider-item' + i}>
-          <a href={item.link} target="_self">
+        <Box key={'slider-item' + i}>
+          {item.link === "#" ? (
             <img
               src={`${item.image}`}
               alt={'Slider item ' + i}
-              style={{width: window.innerWidth < 900 ? '100vw' : '75vw'}}
+              style={{ width: '100%' }}
+              loading="lazy"
             />
-          </a>
-        </div>
+          ) : (
+            <Link underline="none" component={RouterLink} to={item.link} target="_self">
+              <img
+                src={`${item.image}`}
+                alt={'Slider item ' + i}
+                style={{ width: '100%' }}
+                loading="lazy"
+              />
+            </Link>
+          )}
+        </Box>
       ))}
     </Slider>
   )
+};
+
+Carousel.defaultProps = {
+  arrows: true,
+  dots: false,
+  autoplay: false
 };
 
 export default Carousel;

@@ -10,22 +10,22 @@ const Home = () => {
     const items = [
         {
             image: slide1,
-            link: '/'
+            link: '/catalog/stoly-stulya'
         },
         {
             image: slide2,
-            link: '/'
+            link: '/catalog/loshadki-kachalki'
         },
         {
             image: slide3,
-            link: '/'
+            link: '/catalog/igrushki'
         }
     ];
 
     return (
         <>
             <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
-                <Carousel items={items} />
+                <Carousel items={items} arrows={false} autoplay={true} />
             </Box>
         </>
     )

@@ -8,7 +8,7 @@ import texture from '../../images/texture.jpg';
 import Cart from './Cart';
 import MobileMenu from './MobileMenu';
 
-export default function Header() {
+const Header = () => {
 
   return (
     <Grid container alignItems={'center'} py={2} sx={{
@@ -106,7 +106,7 @@ export default function Header() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={2} sm={3} sx={{ display: { xs: 'none', sm: 'block' } }} textAlign={'left'} alignSelf={'end'}>
+      <Grid item xs={0} sm={3} textAlign={'left'} alignSelf={'end'}>
         <Cart />
       </Grid>
       <Grid item xs={2} sm={3} sx={{ display: { xs: 'block', sm: 'none' } }} textAlign={'center'} alignSelf={'center'}>
@@ -114,4 +114,5 @@ export default function Header() {
       </Grid>
     </Grid>
   );
-}
+};
+export default Header;
