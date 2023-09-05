@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx";
 class appState {
 
   categories = [];
-  cartTotal = JSON.parse(localStorage.getItem('cart')).cartTotal || 0;
+  cartTotal = JSON.parse(localStorage.getItem('cart'))?.cartTotal || 0;
 
   constructor() {
     makeAutoObservable(this);

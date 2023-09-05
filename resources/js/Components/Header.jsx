@@ -6,6 +6,7 @@ import { Button, FormControl, Grid, IconButton, InputAdornment, InputLabel, Link
 import logo from '../../images/logo.svg';
 import texture from '../../images/texture.jpg';
 import Cart from './Cart';
+import Search from './Search';
 import MobileMenu from './MobileMenu';
 
 const Header = () => {
@@ -42,28 +43,7 @@ const Header = () => {
             </Typography>
           </Grid>
           <Grid item xs={12} textAlign={'left'} sx={{ display: 'flex', alignItems: 'center' }}>
-            <FormControl sx={{ mr: 1, maxWidth: window.innerWidth < 900 ? '250px' : '350px', width: '100%', display: { xs: 'none', sm: 'block' } }} variant="outlined">
-              <OutlinedInput
-                id="code-box"
-                sx={{
-                  background: 'white',
-                  width: '60%',
-                  height: 48,
-                  transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                  "&:focus-within": {
-                    width: '100%',
-                    transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-                  }                  
-                }}
-                type='text'
-                placeholder='Найти'
-                endAdornment={
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
+            <Search />
             <Link variant='h6' underline="none" href="tel:+79196628330" sx={{
               display: 'inline-block',
               verticalAlign: 'middle',

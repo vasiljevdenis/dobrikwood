@@ -1,0 +1,84 @@
+import { Card, CardActionArea, CardContent, CardMedia, Divider, Grid, LinearProgress, Rating, Typography } from "@mui/material";
+import * as React from "react";
+import { Link as RouterLink } from 'react-router-dom';
+import axios from "axios";
+
+const Cart = () => {
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || {
+        updated_at: new Date(),
+        cartTotal: 0,
+        goods: {}
+    };
+
+    const [cartState, setCartState] = React.useState({...cart});
+
+    const [progress, setProgress] = React.useState(true);
+
+    React.useEffect(() => {
+        setProgress(true);
+        axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName)
+            .then(res => {
+                let json = res.data;
+                setGoods(json);
+                setProgress(false);
+            })
+            .catch(err => {
+            })
+            .finally(() => {
+            });
+    }, [categoryName]);
+
+    return (
+        <>
+            {progress ? (<LinearProgress color="primary" />) : (
+                <>
+                    <Typography variant="h4" component="h2" m={2}>
+                        Корзина
+                    </Typography>
+                    <Grid container p={1} textAlign={'center'}>
+                        {
+                            Object.entries(cartState.goods).map((el, i) => {
+                                return (
+                                    <Grid key={'product' + i} item xs={12} p={1} textAlign={'center'}>
+                                        <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
+                                            <Card sx={{ maxWidth: 345, mx: 'auto' }}>
+                                                <CardActionArea>
+                                                    <CardMedia
+                                                        component="img"
+                                                        height="250"
+                                                        image={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg'}
+                                                        alt="green iguana"
+                                                    />
+                                                    <CardContent>
+                                                        <Typography gutterBottom variant="h5" component="div">
+                                                            {el.name}
+                                                        </Typography>
+                                                        <Divider />
+                                                        <Rating name="read-only" value={el.rate} readOnly />
+                                                        <p style={{ textAlign: 'right' }}>
+                                                            <Typography variant="subtitle2" component="span" gutterBottom sx={{
+                                                                color: 'rgba(0, 0, 0, 0.5)',
+                                                                p: 1
+                                                            }}><del>{el.lastPrice === 0 ? '' : el.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
+                                                            <Typography variant="h6" component="span" gutterBottom sx={{
+                                                                color: 'white',
+                                                                background: '#60a47c',
+                                                                p: 1
+                                                            }}>{el.price === 0 ? '' : el.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
+                                                        </p>
+                                                    </CardContent>
+                                                </CardActionArea>
+                                            </Card>
+                                        </RouterLink>
+                                    </Grid>
+                                );
+                            })
+                        }
+                    </Grid>
+                </>
+            )}
+        </>
+    )
+};
+export default Cart;

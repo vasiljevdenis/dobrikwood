@@ -64,6 +64,7 @@ const Product = observer(() => {
             .finally(() => {
             });
     }
+    
 
     const cart = JSON.parse(localStorage.getItem('cart')) || {
         updated_at: new Date(),

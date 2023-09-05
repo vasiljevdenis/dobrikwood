@@ -16,7 +16,11 @@ const Cart = observer(() => {
         sm: 'static'
       },
       bottom: 1,
-      right: 1
+      right: 1,
+      zIndex: {
+        xs: 1201,
+        sm: 'auto'
+      }
     }}>
       <Grid item xs={12} textAlign={window.innerWidth < 900 ? 'center' : 'left'}>
         <Box sx={{
@@ -26,11 +30,7 @@ const Cart = observer(() => {
           justifyContent: {
             xs: 'flex-end',
             sm: 'normal'
-          },
-          zIndex: {
-            xs: 1201,
-            sm: 'auto'
-          }
+          }          
         }}>
           <IconButton variant="raised" aria-label="Instagram" size="large" color='primary' component={RouterLink} to="/cart" sx={{
             background: 'white',

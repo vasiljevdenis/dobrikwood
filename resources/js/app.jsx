@@ -17,6 +17,7 @@ import Catalog from './Pages/Catalog';
 import Category from './Pages/Category';
 import Product from './Pages/Product';
 import AppState from './store/AppState';
+import Cart from './Pages/Cart';
 
 const newTheme = createTheme({
   palette: {
@@ -74,6 +75,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
             <Route path='/catalog' element={<Catalog />} />
             <Route path='/catalog/:categoryName' element={<Category />} />
             <Route path='/catalog/:categoryName/:productName' element={<Product />} />
+            {/* <Route path='/cart' element={<Cart />} /> */}
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Grid>

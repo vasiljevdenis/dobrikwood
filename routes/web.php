@@ -32,6 +32,17 @@ Route::get('/api/catalog/{category}', function ($category) {
     }
 });
 
+Route::get('/api/search', function (Request $request) {
+    $query = $request->input('query');
+    $res = DB::table('catalog')
+                ->where('name', 'like', '%' . $query . '%')
+                ->where('category', '<>', 'deleted')
+                ->get();
+    if (isset($res)) {
+        return $res;
+    }
+});
+
 Route::get('/api/catalog/{category}/{product}', function ($category, $product) {
     if ($category) {
         $res = DB::select('select * from catalog where category = :category AND path = :product', 
