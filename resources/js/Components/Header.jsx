@@ -49,7 +49,7 @@ const Header = () => {
               verticalAlign: 'middle',
               color: 'white',
               background: '#60a47c',
-              ml: window.innerWidth < 600 ? 'auto' : '0',
+              ml: {xs: 'auto', md: '54px'},
               padding: 1,
               borderRadius: '4px',
               transition: 'all 1.2s cubic-bezier(.4, 0, 0, 1)',

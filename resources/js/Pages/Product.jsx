@@ -135,7 +135,7 @@ const Product = observer(() => {
                         <Card sx={{ width: '100%', mx: 'auto' }}>
                             <CardContent>
                                 <Grid container>
-                                    <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: window.innerWidth < 900 ? '100vw' : '75vw' }}>
+                                    <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: {xs: '100vw', md: '75vw'} }}>
                                         <Carousel items={[
                                             {
                                                 image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '1.jpg',

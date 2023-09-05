@@ -22,7 +22,7 @@ const Cart = observer(() => {
         sm: 'auto'
       }
     }}>
-      <Grid item xs={12} textAlign={window.innerWidth < 900 ? 'center' : 'left'}>
+      <Grid item xs={12} sx={{textAlign: {xs: 'center', md: 'left'}}}>
         <Box sx={{
           display: 'flex',
           alignItems: 'center',

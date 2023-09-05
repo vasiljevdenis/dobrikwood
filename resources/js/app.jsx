@@ -75,7 +75,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
             <Route path='/catalog' element={<Catalog />} />
             <Route path='/catalog/:categoryName' element={<Category />} />
             <Route path='/catalog/:categoryName/:productName' element={<Product />} />
-            {/* <Route path='/cart' element={<Cart />} /> */}
+            <Route path='/cart' element={<Cart />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Grid>
