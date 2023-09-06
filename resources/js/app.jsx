@@ -18,6 +18,7 @@ import Category from './Pages/Category';
 import Product from './Pages/Product';
 import AppState from './store/AppState';
 import Cart from './Pages/Cart';
+import Checkout from './Pages/Checkout';
 
 const newTheme = createTheme({
   palette: {
@@ -63,10 +64,10 @@ ReactDOM.createRoot(document.getElementById('app')).render(
       <AppState />
       <Header />
       <Grid container>
-        <Grid item md={3} sx={{ display: { xs: 'none', md: 'block' }, background: '#f8f3ef' }} textAlign={'center'}>
+        <Grid item md={2} sx={{ display: { xs: 'none', md: 'block' }, background: '#f8f3ef' }} textAlign={'center'}>
           <Sidebar />
         </Grid>
-        <Grid item xs={12} md={9} minHeight={500}>
+        <Grid item xs={12} md={10} minHeight={500}>
           <Horizontalbar />
           <Routes>
             <Route path='/' element={<Home />} />
@@ -76,6 +77,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
             <Route path='/catalog/:categoryName' element={<Category />} />
             <Route path='/catalog/:categoryName/:productName' element={<Product />} />
             <Route path='/cart' element={<Cart />} />
+            <Route path='/checkout' element={<Checkout />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Grid>

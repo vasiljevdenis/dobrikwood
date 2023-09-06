@@ -4,6 +4,7 @@ import { Link as RouterLink, useParams } from 'react-router-dom';
 import axios from "axios";
 import { observer } from "mobx-react-lite";
 import appState from "../store/appState";
+import Carousel from "../Components/Carousel";
 
 const Category = observer(() => {
 
@@ -51,12 +52,20 @@ const Category = observer(() => {
                                         <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
                                             <Card sx={{ maxWidth: 345, mx: 'auto' }}>
                                                 <CardActionArea>
-                                                    <CardMedia
-                                                        component="img"
-                                                        height="250"
-                                                        image={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg'}
-                                                        alt="green iguana"
-                                                    />
+                                                    <Carousel items={[
+                                                        {
+                                                            image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg',
+                                                            link: '#'
+                                                        },
+                                                        {
+                                                            image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '2.jpg',
+                                                            link: '#'
+                                                        },
+                                                        {
+                                                            image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '3.jpg',
+                                                            link: '#'
+                                                        }
+                                                    ]} dots={true} arrows={false} />
                                                     <CardContent>
                                                         <Typography gutterBottom variant="h5" component="div">
                                                             {el.name}

@@ -28,8 +28,8 @@ const Footer = observer(() => {
   };
 
   return (
-    <Grid container sx={{ borderTop: '1px solid rgba(0, 0, 0, 0.12)', py: 2 }}>
-      <Grid item xs={12} md={3} textAlign={'center'}>
+    <Grid container sx={{ borderTop: '1px solid rgba(0, 0, 0, 0.12)', pt: 2, pb: {xs: 5, sm: 2} }}>
+      <Grid item xs={12} md={2} textAlign={'center'}>
         <Link component={RouterLink} to="/" sx={{
           marginRight: 'auto !important',
           marginLeft: 'auto',
@@ -126,7 +126,7 @@ const Footer = observer(() => {
           </ListItem>
         </List>
       </Grid>
-      <Grid item xs={12} md={3} textAlign={'left'} sx={{ display: { xs: 'none', md: 'block' } }}>
+      <Grid item xs={12} md={4} textAlign={'left'} sx={{ display: { xs: 'none', md: 'block' } }}>
         <Typography variant="h6" component="p" pl={2} sx={{ fontFamily: 'Helvetica, sans-serif', color: 'rgba(0, 0, 0, 0.5)' }}>
           Навигация
         </Typography>
@@ -135,6 +135,18 @@ const Footer = observer(() => {
             <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
               <ListItemText
                 primary="Главная"
+                sx={{
+                  "& span": {
+                    fontFamily: 'FuturaPTDemi, sans-serif'
+                  }
+                }}
+              />
+            </Link>
+          </ListItem>
+          <ListItem sx={listItemStyle}>
+            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/catalog" underline="none">
+              <ListItemText
+                primary="Каталог"
                 sx={{
                   "& span": {
                     fontFamily: 'FuturaPTDemi, sans-serif'

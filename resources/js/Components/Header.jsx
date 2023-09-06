@@ -16,7 +16,7 @@ const Header = () => {
       background: `url(${texture})`,
       backgroundSize: 'cover'
     }}>
-      <Grid item xs={3} textAlign={'center'}>
+      <Grid item xs={3} sm={2} textAlign={'center'}>
         <Link component={RouterLink} to="/" sx={{
           marginRight: 'auto !important',
           marginLeft: 'auto',
@@ -30,7 +30,7 @@ const Header = () => {
           <img src={logo} width={100} height={100} style={{ objectFit: 'cover', objectPosition: '0 -16px' }} />
         </Link>
       </Grid>
-      <Grid item xs={7} sm={6} textAlign={'left'} sx={{ pl: '0' }}>
+      <Grid item xs={7} textAlign={'left'} sx={{ pl: '0' }}>
         <Grid container>
           <Grid item xs={12} sx={{ display: { xs: 'none', sm: 'block' } }} textAlign={'left'}>
             <Typography variant="h3" component="h1" sx={{

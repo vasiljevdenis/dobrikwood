@@ -79,7 +79,6 @@ const Product = observer(() => {
         cart.cartTotal = cartTotal;
         localStorage.setItem('cart', JSON.stringify(cart));
         store.changeCartTotal(cartTotal);
-        console.log(cart);
     };
 
     // Обработчик клика на кнопке "Добавить в корзину"
@@ -87,11 +86,13 @@ const Product = observer(() => {
         if (cart.goods[productId]) {
             cart.goods[productId].count++;
             cart.goods[productId].price = product.price;
+            cart.goods[productId].name = product.name;
             cart.goods[productId].totalPrice += product.price;
         } else {
             cart.goods[productId] = {};
             cart.goods[productId].count = 1;
             cart.goods[productId].price = product.price;
+            cart.goods[productId].name = product.name;
             cart.goods[productId].totalPrice = product.price;
         }
         updateCart();
@@ -110,6 +111,7 @@ const Product = observer(() => {
         if (cart.goods[productId].count >= 2) {
             cart.goods[productId].count--;
             cart.goods[productId].price = product.price;
+            cart.goods[productId].name = product.name;
             cart.goods[productId].totalPrice -= product.price;
             updateCart();
             setCount(count - 1);
@@ -122,6 +124,7 @@ const Product = observer(() => {
     const increaseQuantity = (productId) => {
         cart.goods[productId].count++;
         cart.goods[productId].price = product.price;
+        cart.goods[productId].name = product.name;
         cart.goods[productId].totalPrice += product.price;
         updateCart();
         setCount(count + 1);

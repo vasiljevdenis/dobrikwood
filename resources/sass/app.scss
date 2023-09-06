@@ -46,3 +46,37 @@
   .slick-next:before {
     color: rgb(0 0 0 / 70%);
   }
+
+  .rotate {
+    animation: rotate-animation 3s infinite;
+  }
+
+  @keyframes rotate-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    10% {
+        transform: rotate(-20deg);
+    }
+  
+    20% {
+        transform: rotate(-10deg);
+    }
+  
+    100% {
+        transform: rotate(-360deg);
+    }
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  textarea:focus-visible {
+    outline: none;
+  }
+
+  textarea:hover {
+    border: 1px solid #60a47c !important;
+  }
