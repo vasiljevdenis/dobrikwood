@@ -49,6 +49,10 @@ const Product = observer(() => {
             });
     }, [categoryName, productName]);
 
+    const notify = (severity, text) => {
+        store.openSnackbar(severity, text);;
+    }
+
     const changeRate = (newValue) => {
         axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName + '/' + productName + '/rate',
             {
@@ -57,6 +61,7 @@ const Product = observer(() => {
             })
             .then(res => {
                 console.log(res);
+                notify('success', 'Спасибо за оценку!');
             })
             .catch(err => {
                 console.log(err);
@@ -64,7 +69,7 @@ const Product = observer(() => {
             .finally(() => {
             });
     }
-    
+
 
     const cart = JSON.parse(localStorage.getItem('cart')) || {
         updated_at: new Date(),
@@ -85,16 +90,18 @@ const Product = observer(() => {
     const addToCart = (productId) => {
         if (cart.goods[productId]) {
             cart.goods[productId].count++;
-            cart.goods[productId].price = product.price;
-            cart.goods[productId].name = product.name;
             cart.goods[productId].totalPrice += product.price;
         } else {
             cart.goods[productId] = {};
             cart.goods[productId].count = 1;
-            cart.goods[productId].price = product.price;
-            cart.goods[productId].name = product.name;
             cart.goods[productId].totalPrice = product.price;
         }
+        cart.goods[productId].price = product.price;
+        cart.goods[productId].name = product.name;
+        cart.goods[productId].weight = product.weight;
+        cart.goods[productId].length = product.length;
+        cart.goods[productId].width = product.width;
+        cart.goods[productId].height = product.height;
         updateCart();
         setCount(1);
     };
@@ -112,6 +119,10 @@ const Product = observer(() => {
             cart.goods[productId].count--;
             cart.goods[productId].price = product.price;
             cart.goods[productId].name = product.name;
+            cart.goods[productId].weight = product.weight;
+            cart.goods[productId].length = product.length;
+            cart.goods[productId].width = product.width;
+            cart.goods[productId].height = product.height;
             cart.goods[productId].totalPrice -= product.price;
             updateCart();
             setCount(count - 1);
@@ -125,6 +136,10 @@ const Product = observer(() => {
         cart.goods[productId].count++;
         cart.goods[productId].price = product.price;
         cart.goods[productId].name = product.name;
+        cart.goods[productId].weight = product.weight;
+        cart.goods[productId].length = product.length;
+        cart.goods[productId].width = product.width;
+        cart.goods[productId].height = product.height;
         cart.goods[productId].totalPrice += product.price;
         updateCart();
         setCount(count + 1);
@@ -138,7 +153,7 @@ const Product = observer(() => {
                         <Card sx={{ width: '100%', mx: 'auto' }}>
                             <CardContent>
                                 <Grid container>
-                                    <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: {xs: '100vw', md: '75vw'} }}>
+                                    <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: { xs: '100vw', md: '75vw' } }}>
                                         <Carousel items={[
                                             {
                                                 image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '1.jpg',

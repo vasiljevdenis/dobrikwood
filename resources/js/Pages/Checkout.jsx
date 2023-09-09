@@ -1,10 +1,14 @@
-import { Box, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Button, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import TextareaAutosize from "react-autosize-textarea";
+import { observer } from "mobx-react-lite";
+import appState from "../store/appState";
 
-const Checkout = () => {
+const Checkout = observer(() => {
+
+    const [store] = React.useState(appState);
 
     const cart = JSON.parse(localStorage.getItem('cart')) || {
         updated_at: new Date(),
@@ -36,7 +40,12 @@ const Checkout = () => {
         street: '',
         house: '',
         apartment: '',
-        note: ''
+        note: '',
+        recipient: {
+            name: '',
+            lastName: '',
+            phone: ''
+        }
     });
 
     const changeType = (val) => {
@@ -91,6 +100,56 @@ const Checkout = () => {
         setOrder({ ...order, note: val });
     }
 
+    const changeRecipientName = (val) => {
+        setOrder({ ...order, recipient: { ...order.recipient, name: val } });
+    }
+
+    const changeRecipientLastName = (val) => {
+        setOrder({ ...order, recipient: { ...order.recipient, lastName: val } });
+    }
+
+    const changeRecipientPhone = (val) => {
+        setOrder({ ...order, recipient: { ...order.recipient, phone: val } });
+    }
+
+    const notify = (severity, text) => {
+        store.openSnackbar(severity, text);;
+    }
+
+    const calcDelivery = () => {
+        if (order.city && order.street && order.house) {
+            let code = 136;
+            const totalWeight = Object.values(cartState.goods).map(item => item.weight).reduce((a, b) => a + b, 0) * 1000;
+            if (totalWeight <= 30000 && !order.courier) {
+                code = 136;
+            } else if (totalWeight <= 30000 && order.courier) {
+                code = 137;
+            } else if (totalWeight > 30000 && totalWeight <= 50000 && !order.courier) {
+                code = 234;
+            } else if (totalWeight > 30000 && totalWeight <= 50000 && order.courier) {
+                code = 233;
+            }
+            // code = 368;
+            // code = 378;
+            const packages = Object.values(cartState.goods).map(item => {
+                return {
+                    weight: item.weight,
+                    length: item.length,
+                    width: item.width,
+                    height: item.height
+                }
+            });
+            axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
+                tariff_code: code,
+                from_location: 'Чебоксары, ул. Гражданская, 105',
+                to_location: order.city + ', ул. ' + order.street + ', ' + order.house,
+                packages: packages
+            });
+        } else {
+            notify('error', 'Неверно заполнены поля Город, Улица, Дом!')
+        }
+    }
+
     return (
         <>
             <Typography variant="h4" component="h2" m={2}>
@@ -124,10 +183,10 @@ const Checkout = () => {
                         </Grid>
                         <Grid item xs={12} py={1}>
                             <Typography variant="h5" component="h2" gutterBottom>
-                                2. Контактные данные заказчика
+                                2. Контактные данные {order.type === "other" ? 'заказчика' : ''}
                             </Typography>
                         </Grid>
-                        <Grid item xs={12} md={6} py={1}>
+                        <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextField
                                 label="Имя"
                                 value={order.name}
@@ -140,7 +199,7 @@ const Checkout = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6} py={1}>
+                        <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextField
                                 label="Фамилия"
                                 value={order.lastName}
@@ -153,7 +212,7 @@ const Checkout = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6} py={1}>
+                        <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextField
                                 label="Телефон"
                                 value={order.phone}
@@ -166,7 +225,7 @@ const Checkout = () => {
                                 }}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6} py={1}>
+                        <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextField
                                 label="E-mail"
                                 value={order.email}
@@ -179,9 +238,59 @@ const Checkout = () => {
                                 }}
                             />
                         </Grid>
+                        {order.type === "other" ? (
+                            <>
+                                <Grid item xs={12} py={1}>
+                                    <Typography variant="h5" component="h2" gutterBottom>
+                                        3. Контактные данные получателя
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                                    <TextField
+                                        label="Имя"
+                                        value={order.recipient.name}
+                                        onChange={(event) => changeRecipientName(event.target.value)}
+                                        variant="outlined"
+                                        required
+                                        sx={{
+                                            width: '100%',
+                                            maxWidth: '250px'
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                                    <TextField
+                                        label="Фамилия"
+                                        value={order.recipient.lastName}
+                                        onChange={(event) => changeRecipientLastName(event.target.value)}
+                                        variant="outlined"
+                                        required
+                                        sx={{
+                                            width: '100%',
+                                            maxWidth: '250px'
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                                    <TextField
+                                        label="Телефон"
+                                        value={order.recipient.phone}
+                                        onChange={(event) => changeRecipientPhone(event.target.value)}
+                                        variant="outlined"
+                                        required
+                                        sx={{
+                                            width: '100%',
+                                            maxWidth: '250px'
+                                        }}
+                                    />
+                                </Grid>
+                            </>
+                        ) : (
+                            <></>
+                        )}
                         <Grid item xs={12} py={1}>
                             <Typography variant="h5" component="h2" gutterBottom>
-                                3. Способ получения
+                                {order.type === "other" ? '4' : '3'}. Способ получения
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={6} py={1}>
@@ -206,7 +315,7 @@ const Checkout = () => {
                         </Grid>
                         {order.delivery ? (
                             <>
-                                <Grid item xs={12} md={6} py={1}>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <TextField
                                         label="Город/населенный пункт"
                                         value={order.city}
@@ -219,7 +328,7 @@ const Checkout = () => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6} py={1}>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <TextField
                                         label="Улица"
                                         value={order.street}
@@ -232,7 +341,7 @@ const Checkout = () => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6} py={1}>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <TextField
                                         label="Дом"
                                         value={order.house}
@@ -245,7 +354,7 @@ const Checkout = () => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6} py={1}>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <TextField
                                         label="Квартира"
                                         value={order.apartment}
@@ -257,7 +366,7 @@ const Checkout = () => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6} py={1}>
+                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <FormControl sx={{
                                         width: '100%',
                                         maxWidth: '250px'
@@ -271,10 +380,6 @@ const Checkout = () => {
                                             onChange={(event) => changeCompany(event.target.value)}
                                         >
                                             <MenuItem value={'CDEK'}>CDEK</MenuItem>
-                                            <MenuItem value={'Почта России'}>Почта России</MenuItem>
-                                            <MenuItem value={'DPD'}>DPD</MenuItem>
-                                            <MenuItem value={'Boxberry'}>Boxberry</MenuItem>
-                                            <MenuItem value={'ПЭК'}>ПЭК</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -295,15 +400,24 @@ const Checkout = () => {
                                                 checked={order.courier}
                                                 onChange={() => changeCourier(true)}
                                                 control={<Radio />}
-                                                label="Курьером"
+                                                label="Курьером до двери"
                                                 labelPlacement="end"
                                             />
                                         </RadioGroup>
                                     </FormControl>
                                 </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <Button variant="contained" size="small" sx={{ color: 'white' }} onClick={calcDelivery}>
+                                        Рассчитать стоимость
+                                    </Button>
+                                </Grid>
                             </>
-                        ) : ('')}
-                        <Grid item xs={12} py={1}>
+                        ) : (
+                            <Grid item xs={12} py={1}>
+                                <Alert severity="info">Самовывоз доступен только из города Чебоксары Чувашской Республики</Alert>
+                            </Grid>
+                        )}
+                        <Grid item xs={12} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextareaAutosize
                                 rows={1}
                                 placeholder='Примечание'
@@ -356,5 +470,5 @@ const Checkout = () => {
             </Grid>
         </>
     )
-};
+});
 export default Checkout;

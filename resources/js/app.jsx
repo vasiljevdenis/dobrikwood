@@ -19,6 +19,8 @@ import Product from './Pages/Product';
 import AppState from './store/AppState';
 import Cart from './Pages/Cart';
 import Checkout from './Pages/Checkout';
+import Notification from './Components/Notification';
+import Feedback from './Components/Feedback';
 
 const newTheme = createTheme({
   palette: {
@@ -83,6 +85,8 @@ ReactDOM.createRoot(document.getElementById('app')).render(
         </Grid>
       </Grid>
       <Footer />
+      <Notification />
+      <Feedback />
     </ThemeProvider>
   </BrowserRouter>
 );

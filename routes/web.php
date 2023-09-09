@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalculatorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +81,8 @@ Route::post('/api/cart/goods', function (Request $request) {
         return $res;
     }
 });
+
+Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
 
 Route::view('/{path}', 'welcome')
     ->where('path', '.*');

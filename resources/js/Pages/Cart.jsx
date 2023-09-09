@@ -65,7 +65,6 @@ const Cart = observer(() => {
         let c = { ...cartState };
         if (c.goods[productId].count >= 2) {
             c.goods[productId].count--;
-            c.goods[productId].price = price;
             c.goods[productId].totalPrice -= price;
             updateCart(c);
         } else {
@@ -77,7 +76,6 @@ const Cart = observer(() => {
     const increaseQuantity = (productId, price) => {
         let c = { ...cartState };
         c.goods[productId].count++;
-        cart.goods[productId].price = price;
         c.goods[productId].totalPrice += price;
         updateCart(c);
     };
