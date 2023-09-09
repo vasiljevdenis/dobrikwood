@@ -120,6 +120,7 @@ const Checkout = observer(() => {
         if (order.city && order.street && order.house) {
             let code = 136;
             const totalWeight = Object.values(cartState.goods).map(item => item.weight).reduce((a, b) => a + b, 0) * 1000;
+            console.log(totalWeight);
             if (totalWeight <= 30000 && !order.courier) {
                 code = 136;
             } else if (totalWeight <= 30000 && order.courier) {
@@ -139,6 +140,7 @@ const Checkout = observer(() => {
                     height: item.height
                 }
             });
+            console.log(packages);
             axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
                 tariff_code: code,
                 from_location: 'Чебоксары, ул. Гражданская, 105',

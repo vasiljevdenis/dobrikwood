@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\CdekController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
