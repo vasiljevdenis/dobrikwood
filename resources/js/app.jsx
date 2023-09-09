@@ -21,6 +21,7 @@ import Cart from './Pages/Cart';
 import Checkout from './Pages/Checkout';
 import Notification from './Components/Notification';
 import Feedback from './Components/Feedback';
+import ScrollToTop from './Components/ScrollToTop';
 
 const newTheme = createTheme({
   palette: {
@@ -61,6 +62,7 @@ const newTheme = createTheme({
 
 ReactDOM.createRoot(document.getElementById('app')).render(
   <BrowserRouter>
+    <ScrollToTop />
     <ThemeProvider theme={newTheme}>
       <CssBaseline />
       <AppState />

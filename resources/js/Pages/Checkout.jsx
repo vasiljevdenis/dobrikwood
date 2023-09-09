@@ -1,10 +1,11 @@
-import { Alert, Box, Button, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import TextareaAutosize from "react-autosize-textarea";
 import { observer } from "mobx-react-lite";
 import appState from "../store/appState";
+import PaymentIcon from '@mui/icons-material/Payment';
 
 const Checkout = observer(() => {
 
@@ -17,6 +18,7 @@ const Checkout = observer(() => {
     };
 
     const [cartState, setCartState] = React.useState({ ...cart });
+    const [loadShipping, setloadShipping] = React.useState(false);
 
 
     const navigate = useNavigate();
@@ -34,6 +36,7 @@ const Checkout = observer(() => {
         phone: '',
         email: '',
         delivery: true,
+        delivery_sum: 0,
         company: 'CDEK',
         courier: false,
         city: '',
@@ -118,9 +121,9 @@ const Checkout = observer(() => {
 
     const calcDelivery = () => {
         if (order.city && order.street && order.house) {
+            setloadShipping(true);
             let code = 136;
             const totalWeight = Object.values(cartState.goods).map(item => item.weight).reduce((a, b) => a + b, 0) * 1000;
-            console.log(totalWeight);
             if (totalWeight <= 30000 && !order.courier) {
                 code = 136;
             } else if (totalWeight <= 30000 && order.courier) {
@@ -134,19 +137,30 @@ const Checkout = observer(() => {
             // code = 378;
             const packages = Object.values(cartState.goods).map(item => {
                 return {
-                    weight: item.weight,
+                    weight: item.weight * 1000,
                     length: item.length,
                     width: item.width,
                     height: item.height
                 }
             });
-            console.log(packages);
             axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
                 tariff_code: code,
                 from_location: 'Чебоксары, ул. Гражданская, 105',
                 to_location: order.city + ', ул. ' + order.street + ', ' + order.house,
                 packages: packages
-            });
+            })
+                .then(res => {
+                    let result = res.data;
+                    if (result.status) {
+                        setOrder({ ...order, delivery_sum: result.total_sum });
+                    }
+                    setloadShipping(false);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                });
         } else {
             notify('error', 'Неверно заполнены поля Город, Улица, Дом!')
         }
@@ -368,7 +382,11 @@ const Checkout = observer(() => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                                <Grid item xs={12} md={6} py={1} sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: {xs: 'center', md: 'left'}
+                                }}>
                                     <FormControl sx={{
                                         width: '100%',
                                         maxWidth: '250px'
@@ -410,7 +428,7 @@ const Checkout = observer(() => {
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <Button variant="contained" size="small" sx={{ color: 'white' }} onClick={calcDelivery}>
-                                        Рассчитать стоимость
+                                        {loadShipping ? <CircularProgress sx={{ color: 'white' }} size={20} /> : "Рассчитать стоимость"}
                                     </Button>
                                 </Grid>
                             </>
@@ -419,7 +437,7 @@ const Checkout = observer(() => {
                                 <Alert severity="info">Самовывоз доступен только из города Чебоксары Чувашской Республики</Alert>
                             </Grid>
                         )}
-                        <Grid item xs={12} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                        <Grid item xs={12} pt={3} pb={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextareaAutosize
                                 rows={1}
                                 placeholder='Примечание'
@@ -427,7 +445,6 @@ const Checkout = observer(() => {
                                 onChange={(event) => changeNote(event.target.value)}
                                 style={{
                                     width: '100%',
-                                    maxWidth: '250px',
                                     lineHeight: '1.5',
                                     padding: '16.5px 14px',
                                     border: '1px solid rgba(0, 0, 0, 0.23)',
@@ -462,12 +479,48 @@ const Checkout = observer(() => {
                                     );
                                 })
                             }
+                            {order.delivery ? (
+                                <>
+                                    <ListItem>
+                                        <ListItemText
+                                            primary={"Подытог: " + cartState.cartTotal.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
+                                            primaryTypographyProps={{
+                                                typography: 'h6'
+                                            }}
+                                            sx={{
+                                                "& span": {
+                                                    fontFamily: 'FuturaPTDemi, sans-serif'
+                                                }
+                                            }}
+                                        />
+                                    </ListItem>
+                                    <Divider component="li" />
+                                    <ListItem>
+                                        <ListItemText
+                                            primary={order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи'}
+                                            secondary={order.delivery_sum === 0 ? <Button variant="text" size="small" loading onClick={calcDelivery}>{loadShipping ? <CircularProgress color="primary" size={20} /> : "Рассчитать"}</Button> : order.delivery_sum.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
+                                            sx={{
+                                                "& span": {
+                                                    fontFamily: 'FuturaPTDemi, sans-serif'
+                                                }
+                                            }}
+                                        />
+                                    </ListItem>
+                                </>
+                            ) : (
+                                <></>
+                            )}
                         </List>
                         <Divider />
                         <Typography variant="h5" component="p" m={2}>
-                            Итого: {cartState.cartTotal.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
+                            Итого: {(order.delivery ? cartState.cartTotal + order.delivery_sum : cartState.cartTotal).toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
                         </Typography>
                     </Box>
+                </Grid>
+                <Grid item xs={12} md={9} p={1} textAlign={'center'}>
+                    <Button variant="contained" component={RouterLink} to="/payment" sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
+                        Перейти к оплате
+                    </Button>
                 </Grid>
             </Grid>
         </>

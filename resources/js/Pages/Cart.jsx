@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Card, CardContent, CardMedia, Grid, IconButton, LinearProgress, Link, Typography } from "@mui/material";
+import { Alert, Badge, Box, Button, Card, CardContent, CardMedia, Grid, IconButton, LinearProgress, Link, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink } from 'react-router-dom';
 import axios from "axios";
@@ -96,6 +96,9 @@ const Cart = observer(() => {
                                 Корзина
                             </Typography>
                             <Grid container p={1} textAlign={'center'}>
+                            <Grid item xs={12} p={2}>
+                                <Alert severity="info">Стоимость доставки рассчитывается на странице оформления заказа</Alert>
+                            </Grid>
                                 {
                                     goods.map((el, i) => {
                                         return (
