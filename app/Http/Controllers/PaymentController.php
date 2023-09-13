@@ -45,10 +45,10 @@ class PaymentController extends Controller
             uniqid('', true)
         );
         $status = $payment->getStatus();
-        $confirmationUrl = $payment->getConfirmation()->getConfirmationToken();
+        $confirmationToken = $payment->getConfirmation()->getConfirmationToken();
         $result = array(
             "status" => $status,
-            "confirmation_url" => $confirmationUrl
+            "confirmation_token" => $confirmationToken
         );
         return json_encode($result);
     }

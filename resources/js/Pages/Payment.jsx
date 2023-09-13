@@ -36,6 +36,14 @@ const Payment = observer(() => {
         }
       });
 
+      checkout.on('success', () => {
+        checkout.destroy();
+        navigate('/success');
+      });
+      checkout.on('fail', () => {
+        checkout.destroy();
+        navigate('/fail');
+      });
       checkout.render('payment-form');
     }
   };
@@ -49,7 +57,7 @@ const Payment = observer(() => {
         .then(res => {
           let result = res.data;
           if (result.status === "pending") {
-            initWidget(result.confirmation.confirmation_token);
+            initWidget(result.confirmation_token);
             setProgress(false);
           }
         })
