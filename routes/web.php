@@ -85,6 +85,7 @@ Route::post('/api/cart/goods', function (Request $request) {
 });
 
 Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
+Route::get('/api/no', [CdekController::class, 'createOrder']);
 
 Route::post('/api/order/new', [OrderController::class, 'newOrder']);
 
