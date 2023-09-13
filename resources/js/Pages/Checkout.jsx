@@ -250,11 +250,14 @@ const Checkout = observer(() => {
                 orderData.delivery_days = getDaysDelivery(order.delivery_days);
                 orderData.address = order.city + ', ' + order.street + ', ' + order.house + (order.apartment ? ', кв. ' + order.apartment : '');
                 orderData.cdek = {
-                    code: order.cdek.code,
+                    tariff_code: order.cdek.code,
                     recipient: {
                         name: order.type === "other" ? order.recipient.name : order.name,
-                        phones: order.type === "other" ? [order.recipient.phone] : [order.phone],
-                        number: order.type === "other" ? order.recipient.phone : order.phone
+                        phones: [
+                            {
+                                number: order.type === "other" ? order.recipient.phone : order.phone
+                            }
+                        ]
                     },
                     from_location: {
                         address: 'Чебоксары, ул. Гражданская, 105'

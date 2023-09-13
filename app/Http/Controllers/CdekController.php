@@ -77,18 +77,17 @@ class CdekController extends Controller
             if ($response->ok()) {
                 $token = $response->json()['access_token'];
                 foreach ($fields as $key => $value) {
-                    $response = Http::withToken($token)->post('https://api.cdek.ru/v2/orders', $value->cdek);
-                    if ($response->ok()) {
+                    $resp = Http::withToken($token)->post('https://api.cdek.ru/v2/orders', json_decode($value->cdek, true));
+                    if ($resp->json()['requests'][0]['state'] != "INVALID") {
                         $affected = DB::table('orders')
                             ->where('id', $value->id)
                             ->update(['status' => 'processing']);
-                        $response = $response->json();
                         $result = array(
                             "status" => true
                         );
                         return json_encode($result);
                     } else {
-                        return $this->apiError($response->json()['errors'][0]['message']);
+                        return $this->apiError($resp->json()['requests'][0]['errors'][0]['message']);
                     }
                 }
             } else {
