@@ -22,6 +22,7 @@ import Checkout from './Pages/Checkout';
 import Notification from './Components/Notification';
 import Feedback from './Components/Feedback';
 import ScrollToTop from './Components/ScrollToTop';
+import Payment from './Pages/Payment';
 
 const newTheme = createTheme({
   palette: {
@@ -82,6 +83,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
             <Route path='/catalog/:categoryName/:productName' element={<Product />} />
             <Route path='/cart' element={<Cart />} />
             <Route path='/checkout' element={<Checkout />} />
+            <Route path='/payment' element={<Payment />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Grid>

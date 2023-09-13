@@ -80,3 +80,7 @@
   textarea:hover {
     border: 1px solid #60a47c !important;
   }
+
+  ymaps[class*="suggest-item_selected_yes"] {
+    background: rgba(96, 164, 124, 0.08);
+  }

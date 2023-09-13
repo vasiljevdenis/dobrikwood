@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CdekController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -84,5 +86,9 @@ Route::post('/api/cart/goods', function (Request $request) {
 
 Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
 
-Route::view('/{path}', 'welcome')
+Route::post('/api/order/new', [OrderController::class, 'newOrder']);
+
+Route::post('/api/payment', [PaymentController::class, 'yooKassa']);
+
+Route::view('/{path}', 'welcome', [])
     ->where('path', '.*');

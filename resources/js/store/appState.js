@@ -7,6 +7,7 @@ class appState {
   snackOpen = false;
   snackSeverity = 'success';
   snackText = '';
+  orderId = 38;
 
   constructor() {
     makeAutoObservable(this);
@@ -30,6 +31,10 @@ class appState {
     this.snackOpen = false;
   }
 
+  changeOrderId(id) {
+    this.orderId = id;
+  }
+
   get allCategories() {
     return this.categories;
   }
@@ -46,6 +51,10 @@ class appState {
   }
   get snackbarText() {
     return this.snackText;
+  }
+
+  get orderIdVal() {
+    return this.orderId;
   }
 
 }

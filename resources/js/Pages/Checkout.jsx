@@ -6,6 +6,10 @@ import TextareaAutosize from "react-autosize-textarea";
 import { observer } from "mobx-react-lite";
 import appState from "../store/appState";
 import PaymentIcon from '@mui/icons-material/Payment';
+import { YMaps, withYMaps } from "@pbe/react-yandex-maps";
+import getDaysDelivery from "../helpers/getDaysDelivery";
+import streetVariations from "../helpers/streetVariations";
+import formValidator from "../helpers/formValidator";
 
 const Checkout = observer(() => {
 
@@ -37,6 +41,7 @@ const Checkout = observer(() => {
         email: '',
         delivery: true,
         delivery_sum: 0,
+        delivery_days: [],
         company: 'CDEK',
         courier: false,
         city: '',
@@ -48,6 +53,9 @@ const Checkout = observer(() => {
             name: '',
             lastName: '',
             phone: ''
+        },
+        cdek: {
+            code: 136
         }
     });
 
@@ -133,8 +141,6 @@ const Checkout = observer(() => {
             } else if (totalWeight > 30000 && totalWeight <= 50000 && order.courier) {
                 code = 233;
             }
-            // code = 368;
-            // code = 378;
             const packages = Object.values(cartState.goods).map(item => {
                 return {
                     weight: item.weight * 1000,
@@ -146,13 +152,15 @@ const Checkout = observer(() => {
             axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
                 tariff_code: code,
                 from_location: 'Чебоксары, ул. Гражданская, 105',
-                to_location: order.city + ', ул. ' + order.street + ', ' + order.house,
+                to_location: order.city + ', ' + order.street + ', ' + order.house,
                 packages: packages
             })
                 .then(res => {
                     let result = res.data;
                     if (result.status) {
-                        setOrder({ ...order, delivery_sum: result.total_sum });
+                        setOrder({ ...order, delivery_sum: Math.ceil(result.total_sum * 1.1), delivery_days: result.period_min === result.period_max ? [result.period_min] : [result.period_min, result.period_max] });
+                    } else {
+                        notify('error', result.message);
                     }
                     setloadShipping(false);
                 })
@@ -166,6 +174,138 @@ const Checkout = observer(() => {
         }
     }
 
+    function MapSuggestComponent(props) {
+        const { ymaps } = props;
+
+        React.useEffect(() => {
+            const suggestView = new ymaps.SuggestView("suggest");
+            suggestView.events.add('select', (e) => {
+                let fullAddress = e.get('item').value.split(',');
+                if (fullAddress.length > 1) {
+                    let locality = [];
+                    let street = '';
+                    let house = '';
+                    fullAddress.forEach(item => {
+                        const el = item.toLowerCase().trim();
+                        const hasWord = streetVariations.some(word => el.includes(word));
+                        const hasHouse = el.length > 0 && el.split('').filter(char => !isNaN(char)).length >= el.length / 2;
+                        if (hasWord) {
+                            street = item.trim();
+                        } else if (hasHouse) {
+                            house = item.trim();
+                        } else {
+                            locality.push(item.trim());
+                        }
+                    });
+                    setOrder({ ...order, city: locality.join(', '), street: street, house: house });
+                } else {
+                    setOrder({ ...order, city: fullAddress[0].trim() });
+                }
+            });
+        }, []);
+
+        return <TextField
+            label="Город/населенный пункт"
+            id="suggest"
+            variant="outlined"
+            value={props.value}
+            onChange={(event) => changeCity(event.target.value)}
+            required
+            sx={{
+                width: '100%',
+                maxWidth: '250px'
+            }}
+        />;
+    }
+
+    const SuggestComponent = React.useMemo(() => {
+        return withYMaps(MapSuggestComponent, true, [
+            "SuggestView",
+            "geocode",
+            "coordSystem.geo"
+        ]);
+    }, []);
+
+    const saveOrder = () => {
+        let isValid = formValidator(order);
+        if (isValid) {
+            let orderData = {};
+            orderData.name = order.name;
+            orderData.lastName = order.lastName;
+            orderData.phone = order.phone;
+            orderData.email = order.email;
+            orderData.goods = cartState.goods;
+            orderData.price = cartState.cartTotal;
+            orderData.note = order.note;
+            if (order.type === "other") {
+                orderData.recipient = {
+                    name: order.recipient.name,
+                    lastName: order.recipient.lastName,
+                    phone: order.recipient.phone
+                };
+            }
+            if (order.delivery) {
+                orderData.delivery_type = order.courier ? 'Курьером' : 'Пункт выдачи';
+                orderData.delivery_sum = order.delivery_sum;
+                orderData.delivery_days = getDaysDelivery(order.delivery_days);
+                orderData.address = order.city + ', ' + order.street + ', ' + order.house + (order.apartment ? ', кв. ' + order.apartment : '');
+                orderData.cdek = {
+                    code: order.cdek.code,
+                    recipient: {
+                        name: order.type === "other" ? order.recipient.name : order.name,
+                        phones: order.type === "other" ? [order.recipient.phone] : [order.phone],
+                        number: order.type === "other" ? order.recipient.phone : order.phone
+                    },
+                    from_location: {
+                        address: 'Чебоксары, ул. Гражданская, 105'
+                    },
+                    to_location: {
+                        address: order.city + ', ' + order.street + ', ' + order.house + (order.apartment ? ', кв. ' + order.apartment : '')
+                    },
+                    packages: Object.entries(cartState.goods).map(el => {
+                        return Array.from({ length: el[1].count }, () => ({
+                            number: el[0],
+                            weight: el[1].weight * 1000,
+                            length: el[1].length,
+                            width: el[1].width,
+                            height: el[1].height,
+                            items: [{
+                                name: el[1].name,
+                                ware_key: el[0],
+                                payment: {
+                                    value: 0
+                                },
+                                cost: el[1].price,
+                                weight: el[1].weight * 1000,
+                                amount: 1
+                            }]
+                        }))
+                    }).flat()
+                };
+            } else {
+                orderData.address = 'Самовывоз';
+            }
+            axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/order/new', orderData)
+                .then(res => {
+                    let result = res.data;
+                    if (result.status) {
+                        store.changeOrderId(result.order_id);
+                        navigate('/payment');
+                    } else {
+                        notify('error', result.message);
+                    }
+                    setloadShipping(false);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                });
+        } else {
+            notify('error', 'Заполните правильно все обязательные поля!');
+        }
+    }
+
     return (
         <>
             <Typography variant="h4" component="h2" m={2}>
@@ -176,7 +316,7 @@ const Checkout = observer(() => {
                     <Grid container>
                         <Grid item xs={12} py={1}>
                             <Typography variant="h5" component="h2" gutterBottom>
-                                1. Для кого вы бы хотели сделать заказ?
+                                1. Для кого вы хотели бы сделать заказ?
                             </Typography>
                         </Grid>
                         <Grid item xs={12} md={6} py={1}>
@@ -332,17 +472,12 @@ const Checkout = observer(() => {
                         {order.delivery ? (
                             <>
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                    <TextField
-                                        label="Город/населенный пункт"
-                                        value={order.city}
-                                        onChange={(event) => changeCity(event.target.value)}
-                                        variant="outlined"
-                                        required
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: '250px'
-                                        }}
-                                    />
+                                    <YMaps
+                                        enterprise
+                                        query={{ apikey: "05e2ef52-4f18-474e-b223-9e4092d9f9bc", }}
+                                    >
+                                        <SuggestComponent value={order.city} />
+                                    </YMaps>
                                 </Grid>
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <TextField
@@ -385,7 +520,7 @@ const Checkout = observer(() => {
                                 <Grid item xs={12} md={6} py={1} sx={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: {xs: 'center', md: 'left'}
+                                    justifyContent: { xs: 'center', md: 'left' }
                                 }}>
                                     <FormControl sx={{
                                         width: '100%',
@@ -497,8 +632,8 @@ const Checkout = observer(() => {
                                     <Divider component="li" />
                                     <ListItem>
                                         <ListItemText
-                                            primary={order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи'}
-                                            secondary={order.delivery_sum === 0 ? <Button variant="text" size="small" loading onClick={calcDelivery}>{loadShipping ? <CircularProgress color="primary" size={20} /> : "Рассчитать"}</Button> : order.delivery_sum.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
+                                            primary={(order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи') + ' ' + getDaysDelivery(order.delivery_days)}
+                                            secondary={order.delivery_sum === 0 ? <Button variant="text" size="small" onClick={calcDelivery}>{loadShipping ? <CircularProgress color="primary" size={20} /> : "Рассчитать"}</Button> : order.delivery_sum.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
                                             sx={{
                                                 "& span": {
                                                     fontFamily: 'FuturaPTDemi, sans-serif'
@@ -518,7 +653,7 @@ const Checkout = observer(() => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={9} p={1} textAlign={'center'}>
-                    <Button variant="contained" component={RouterLink} to="/payment" sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
+                    <Button variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
                         Перейти к оплате
                     </Button>
                 </Grid>

@@ -15,6 +15,7 @@
         "@emotion/styled": "^11.11.0",
         "@mui/icons-material": "^5.14.7",
         "@mui/material": "^5.14.7",
+        "@pbe/react-yandex-maps": "^1.2.4",
         "@vitejs/plugin-react": "^4.0.4",
         "autosuggest-highlight": "^3.3.4",
         "mobx": "^6.10.2",
