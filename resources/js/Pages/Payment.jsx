@@ -24,12 +24,12 @@ const Payment = observer(() => {
     script.onload = function () {
       const checkout = new window.YooMoneyCheckoutWidget({
         confirmation_token: token,
-        return_url: '/success',
         customization: {
           colors: {
             control_primary: '#60a47c',
             control_primary_content: '#ffffff'
-          }
+          },
+          // payment_methods: ['bank_card', 'yoo_money', 'sberbank', 'sbp']
         },
         error_callback: function (error) {
           notify('error', error);

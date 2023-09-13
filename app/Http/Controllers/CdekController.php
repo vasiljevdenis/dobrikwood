@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class CdekController extends Controller
@@ -58,6 +59,43 @@ class CdekController extends Controller
             }
         } else {
             return $this->apiError('Неверно введен адрес!');
+        }
+    }
+
+    public function createOrder()
+    {
+        $fields = DB::table('orders')
+            ->select('id', 'cdek')
+            ->where('status', '=', 'created')
+            ->get();
+        if ($fields) {
+            $response = Http::asForm()->post('https://api.cdek.ru/v2/oauth/token', [
+                'grant_type' => 'client_credentials',
+                'client_id' => env('CDEK_CLIENT_ID', ''),
+                'client_secret' => env('CDEK_CLIENT_SECRET', '')
+            ]);
+            if ($response->ok()) {
+                $token = $response->json()['access_token'];
+                foreach ($fields as $key => $value) {
+                    $response = Http::withToken($token)->post('https://api.cdek.ru/v2/orders', $value->cdek);
+                    if ($response->ok()) {
+                        $affected = DB::table('orders')
+                            ->where('id', $value->id)
+                            ->update(['status' => 'processing']);
+                        $response = $response->json();
+                        $result = array(
+                            "status" => true
+                        );
+                        return json_encode($result);
+                    } else {
+                        return $this->apiError($response->json()['errors'][0]['message']);
+                    }
+                }
+            } else {
+                return $this->apiError('Ошибка авторизации!');
+            }
+        } else {
+            return $this->apiError('Нет данных!');
         }
     }
 }

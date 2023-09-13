@@ -653,7 +653,7 @@ const Checkout = observer(() => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={9} p={1} textAlign={'center'}>
-                    <Button variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
+                    <Button disabled={order.delivery && order.delivery_sum === 0 ? true : false} variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
                         Перейти к оплате
                     </Button>
                 </Grid>
