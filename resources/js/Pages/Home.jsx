@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import * as React from "react";
 import Carousel from "../Components/Carousel";
 import slide1 from '../../images/001.png';
@@ -34,12 +34,14 @@ const Home = () => {
     ];
 
     return (
-        <>
-            <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
-                <Carousel items={items} arrows={false} autoplay={true} />
-            </Box>
-            <RandomGoods />
-        </>
+        <Grid container p={2}>
+            <Grid item xs={12}>
+                <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
+                    <Carousel items={items} arrows={false} autoplay={true} />
+                </Box>
+                <RandomGoods />
+            </Grid>
+        </Grid>
     )
 };
 

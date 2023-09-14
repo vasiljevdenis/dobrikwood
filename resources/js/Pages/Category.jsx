@@ -1,4 +1,4 @@
-import { Card, CardActionArea, CardContent, CardMedia, Divider, Grid, LinearProgress, Rating, Typography } from "@mui/material";
+import { Card, CardActionArea, CardContent, Divider, Grid, LinearProgress, Rating, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import axios from "axios";

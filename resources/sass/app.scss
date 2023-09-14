@@ -84,3 +84,7 @@
   ymaps[class*="suggest-item_selected_yes"] {
     background: rgba(96, 164, 124, 0.08);
   }
+
+  a:-webkit-any-link {
+    text-decoration: none;
+  }

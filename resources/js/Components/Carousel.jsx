@@ -42,7 +42,7 @@ const Carousel = (props) => {
                 src={`${item.image}`}
                 alt={'Slider item ' + i}
                 style={{ width: '100%' }}
-                loading="lazy"
+                loading={props.loading}
               />
             </Link>
           )}
@@ -55,7 +55,8 @@ const Carousel = (props) => {
 Carousel.defaultProps = {
   arrows: true,
   dots: false,
-  autoplay: false
+  autoplay: false,
+  loading: 'lazy'
 };
 
 export default Carousel;
