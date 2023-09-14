@@ -28,6 +28,7 @@ Route::get('/api/catalog', function () {
 Route::get('/api/catalog-random', function () {
     $data = DB::table('catalog')
                 ->inRandomOrder()
+                ->where('category', '<>', 'deleted')
                 ->limit(9)
                 ->get();
     return $data;

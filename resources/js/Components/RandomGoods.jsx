@@ -38,7 +38,7 @@ const RandomGoods = () => {
     }, []);
 
     return (
-        <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
+        <Box p={0} m={0} sx={{ width: '100%', height: '100%', textAlign: 'center' }}>
             <Slider {...settings}>
                 {slider.map((el, i) => (
                     <RouterLink key={'product' + i} style={{ textDecoration: 'none' }} to={'/catalog/' + el.category + '/' + el.path}>
