@@ -7,7 +7,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Carousel from "./Carousel";
 import axios from "axios";
 
-const RandomGoods = () => {
+const RandomGoods = (props) => {
 
     const [slider, setSlider] = React.useState([]);
 
@@ -46,7 +46,7 @@ const RandomGoods = () => {
     };
 
     React.useEffect(() => {
-        axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog-random')
+        axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/catalog-' + props.type)
             .then(res => {
                 let json = res.data;
                 setSlider(json);
@@ -60,12 +60,12 @@ const RandomGoods = () => {
     return (
         <Box p={0} m={0} sx={{ width: '100%', height: '100%', textAlign: 'center' }}>
             <Typography gutterBottom variant="h4" component="div" textAlign={'left'}>
-                Возможно Вам понравится
+                {props.title}
             </Typography>
             <Slider {...settings}>
                 {slider.map((el, i) => (
                     <Card key={'product' + i} sx={{ maxWidth: 345, mx: 'auto' }}>
-                        <CardActionArea>
+                        <CardActionArea component="div">
                             <Carousel items={[
                                 {
                                     image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg',
@@ -105,5 +105,10 @@ const RandomGoods = () => {
         </Box>
     )
 };
+
+RandomGoods.defaultProps = {
+    type: 'random',
+    title: ''
+  };
 
 export default RandomGoods;

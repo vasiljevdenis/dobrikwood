@@ -25,12 +25,28 @@ Route::get('/api/catalog', function () {
     $json = DB::select('select * from categories');
     return $json;
 });
-Route::get('/api/catalog-random', function () {
-    $data = DB::table('catalog')
-                ->inRandomOrder()
-                ->where('category', '<>', 'deleted')
-                ->limit(9)
-                ->get();
+Route::get('/api/catalog-{type}', function ($type) {
+    $data = [];
+    if ($type === "random") {
+        $data = DB::table('catalog')
+            ->inRandomOrder()
+            ->where('category', '<>', 'deleted')
+            ->limit(9)
+            ->get();
+    } elseif ($type === "sale") {
+        $data = DB::table('catalog')
+            ->where('badge', '<>', "new")
+            ->where('badge', '<>', "top")
+            ->where('category', '<>', 'deleted')
+            ->limit(9)
+            ->get();
+    } else {
+        $data = DB::table('catalog')
+            ->where('badge', '=', $type)
+            ->where('category', '<>', 'deleted')
+            ->limit(9)
+            ->get();
+    }
     return $data;
 });
 
@@ -101,8 +117,8 @@ Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
 Route::post('/api/order/new', [OrderController::class, 'newOrder']);
 Route::get('/api/order/notification', function (Request $request) {
     $db = DB::table('orders')
-    ->where('id', '=', (int) $request->input('id'))
-    ->get()[0];
+        ->where('id', '=', (int) $request->input('id'))
+        ->get()[0];
     Notification::route('chat_id', config('services.telegram-bot-api.chatid'))
         ->route('id', $db->id)
         ->route('name', $db->name)
@@ -124,8 +140,8 @@ Route::get('/api/order/notification', function (Request $request) {
 });
 Route::get('/api/order/mail', function (Request $request) {
     $db = DB::table('orders')
-    ->where('id', '=', (int) $request->input('id'))
-    ->get()[0];
+        ->where('id', '=', (int) $request->input('id'))
+        ->get()[0];
     $mc = new MailController();
     return $mc->index($db);
 });

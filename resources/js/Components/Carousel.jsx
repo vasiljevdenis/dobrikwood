@@ -34,7 +34,7 @@ const Carousel = (props) => {
               src={`${item.image}`}
               alt={'Slider item ' + i}
               style={{ width: '100%' }}
-              loading="lazy"
+              loading={props.loading}
             />
           ) : (
             <Link underline="none" component={RouterLink} to={item.link} target="_self">

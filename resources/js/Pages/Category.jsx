@@ -51,7 +51,7 @@ const Category = observer(() => {
                                     <Grid key={'product' + i} item xs={12} sm={6} md={4} p={1} textAlign={'center'}>
                                         <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
                                             <Card sx={{ maxWidth: 345, mx: 'auto' }}>
-                                                <CardActionArea>
+                                                <CardActionArea component="div">
                                                     <Carousel items={[
                                                         {
                                                             image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg',

@@ -34,14 +34,16 @@ const Home = () => {
     ];
 
     return (
-        <Grid container p={2}>
-            <Grid item xs={12}>
-                <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
-                    <Carousel items={items} arrows={false} autoplay={true} />
-                </Box>
-                <RandomGoods />
+        <>
+            <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
+                <Carousel items={items} arrows={false} autoplay={true} loading="eager" />
+            </Box>
+            <Grid container p={2}>
+                <Grid item xs={12}>
+                    <RandomGoods title="Новинки" type="new" />
+                </Grid>
             </Grid>
-        </Grid>
+        </>
     )
 };
 
