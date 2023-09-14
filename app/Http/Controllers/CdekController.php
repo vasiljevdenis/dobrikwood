@@ -81,7 +81,7 @@ class CdekController extends Controller
                     if ($resp->json()['requests'][0]['state'] != "INVALID") {
                         $affected = DB::table('orders')
                             ->where('id', $value->id)
-                            ->update(['status' => 'processing']);
+                            ->update(['status' => 'processing', 'cdek->uuid' => $resp->json()['entity']['uuid']]);
                         $result = array(
                             "status" => true
                         );

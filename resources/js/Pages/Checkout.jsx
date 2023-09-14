@@ -10,6 +10,60 @@ import { YMaps, withYMaps } from "@pbe/react-yandex-maps";
 import getDaysDelivery from "../helpers/getDaysDelivery";
 import streetVariations from "../helpers/streetVariations";
 import formValidator from "../helpers/formValidator";
+import ReactInputMask from "react-input-mask";
+
+const MapSuggestComponent = observer((props) => {
+    const [store] = React.useState(appState);
+
+    const { ymaps } = props;
+
+    React.useEffect(() => {
+        const suggestView = new ymaps.SuggestView("suggest");
+        suggestView.events.add('select', (e) => {
+            let fullAddress = e.get('item').value.split(',');
+            if (fullAddress.length > 1) {
+                let locality = [];
+                let street = '';
+                let house = '';
+                fullAddress.forEach(item => {
+                    const el = item.toLowerCase().trim();
+                    const hasWord = streetVariations.some(word => el.includes(word));
+                    const hasHouse = el.length > 0 && el.split('').filter(char => !isNaN(char)).length >= el.length / 2;
+                    if (hasWord) {
+                        street = item.trim();
+                    } else if (hasHouse) {
+                        house = item.trim();
+                    } else {
+                        locality.push(item.trim());
+                    }
+                });
+                store.changeAddress({
+                    city: locality.join(', '),
+                    street: street,
+                    house: house
+                });
+            } else {
+                store.changeAddress({
+                    ...store.addressVal,
+                    city: fullAddress[0].trim(),
+                });
+            }
+        });
+    }, [ymaps.SuggestView]);
+
+    return <TextField
+        label="Город/населенный пункт"
+        id="suggest"
+        variant="outlined"
+        value={store.addressVal.city}
+        onChange={(event) => store.changeAddress({...store.addressVal, city: event.target.value})}
+        required
+        sx={{
+            width: '100%',
+            maxWidth: '250px'
+        }}
+    />;
+});
 
 const Checkout = observer(() => {
 
@@ -89,10 +143,12 @@ const Checkout = observer(() => {
 
     const changeStreet = (val) => {
         setOrder({ ...order, street: val });
+
     }
 
     const changeHouse = (val) => {
         setOrder({ ...order, house: val });
+
     }
 
     const changeApartment = (val) => {
@@ -122,6 +178,10 @@ const Checkout = observer(() => {
     const changeRecipientPhone = (val) => {
         setOrder({ ...order, recipient: { ...order.recipient, phone: val } });
     }
+
+    React.useEffect(() => {
+        setOrder({ ...order, city: store.addressVal.city, street: store.addressVal.street, house: store.addressVal.house });
+    }, [store.addressVal]);
 
     const notify = (severity, text) => {
         store.openSnackbar(severity, text);;
@@ -159,6 +219,7 @@ const Checkout = observer(() => {
                     let result = res.data;
                     if (result.status) {
                         setOrder({ ...order, delivery_sum: Math.ceil(result.total_sum * 1.1), delivery_days: result.period_min === result.period_max ? [result.period_min] : [result.period_min, result.period_max] });
+                        window.scrollTo(0, document.body.scrollHeight);
                     } else {
                         notify('error', result.message);
                     }
@@ -172,50 +233,6 @@ const Checkout = observer(() => {
         } else {
             notify('error', 'Неверно заполнены поля Город, Улица, Дом!')
         }
-    }
-
-    function MapSuggestComponent(props) {
-        const { ymaps } = props;
-
-        React.useEffect(() => {
-            const suggestView = new ymaps.SuggestView("suggest");
-            suggestView.events.add('select', (e) => {
-                let fullAddress = e.get('item').value.split(',');
-                if (fullAddress.length > 1) {
-                    let locality = [];
-                    let street = '';
-                    let house = '';
-                    fullAddress.forEach(item => {
-                        const el = item.toLowerCase().trim();
-                        const hasWord = streetVariations.some(word => el.includes(word));
-                        const hasHouse = el.length > 0 && el.split('').filter(char => !isNaN(char)).length >= el.length / 2;
-                        if (hasWord) {
-                            street = item.trim();
-                        } else if (hasHouse) {
-                            house = item.trim();
-                        } else {
-                            locality.push(item.trim());
-                        }
-                    });
-                    setOrder({ ...order, city: locality.join(', '), street: street, house: house });
-                } else {
-                    setOrder({ ...order, city: fullAddress[0].trim() });
-                }
-            });
-        }, []);
-
-        return <TextField
-            label="Город/населенный пункт"
-            id="suggest"
-            variant="outlined"
-            value={props.value}
-            onChange={(event) => changeCity(event.target.value)}
-            required
-            sx={{
-                width: '100%',
-                maxWidth: '250px'
-            }}
-        />;
     }
 
     const SuggestComponent = React.useMemo(() => {
@@ -232,7 +249,7 @@ const Checkout = observer(() => {
             let orderData = {};
             orderData.name = order.name;
             orderData.lastName = order.lastName;
-            orderData.phone = order.phone;
+            orderData.phone = order.phone.replace(/[^\d+]/g, "");
             orderData.email = order.email;
             orderData.goods = cartState.goods;
             orderData.price = cartState.cartTotal;
@@ -241,7 +258,7 @@ const Checkout = observer(() => {
                 orderData.recipient = {
                     name: order.recipient.name,
                     lastName: order.recipient.lastName,
-                    phone: order.recipient.phone
+                    phone: order.recipient.phone.replace(/[^\d+]/g, "")
                 };
             }
             if (order.delivery) {
@@ -255,7 +272,7 @@ const Checkout = observer(() => {
                         name: order.type === "other" ? order.recipient.name : order.name,
                         phones: [
                             {
-                                number: order.type === "other" ? order.recipient.phone : order.phone
+                                number: order.type === "other" ? order.recipient.phone.replace(/[^\d+]/g, "") : order.phone.replace(/[^\d+]/g, "")
                             }
                         ]
                     },
@@ -372,17 +389,17 @@ const Checkout = observer(() => {
                             />
                         </Grid>
                         <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                            <TextField
-                                label="Телефон"
-                                value={order.phone}
-                                onChange={(event) => changePhone(event.target.value)}
-                                variant="outlined"
-                                required
-                                sx={{
-                                    width: '100%',
-                                    maxWidth: '250px'
-                                }}
-                            />
+                            <ReactInputMask mask="+7 (999) 999-99-99" value={order.phone} onChange={(event) => changePhone(event.target.value)}>
+                                <TextField
+                                    label="Телефон"
+                                    variant="outlined"
+                                    required
+                                    sx={{
+                                        width: '100%',
+                                        maxWidth: '250px'
+                                    }}
+                                />
+                            </ReactInputMask>
                         </Grid>
                         <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                             <TextField
@@ -431,17 +448,17 @@ const Checkout = observer(() => {
                                     />
                                 </Grid>
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                    <TextField
-                                        label="Телефон"
-                                        value={order.recipient.phone}
-                                        onChange={(event) => changeRecipientPhone(event.target.value)}
-                                        variant="outlined"
-                                        required
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: '250px'
-                                        }}
-                                    />
+                                    <ReactInputMask mask="+7 (999) 999-99-99" value={order.recipient.phone} onChange={(event) => changeRecipientPhone(event.target.value)}>
+                                        <TextField
+                                            label="Телефон"
+                                            variant="outlined"
+                                            required
+                                            sx={{
+                                                width: '100%',
+                                                maxWidth: '250px'
+                                            }}
+                                        />
+                                    </ReactInputMask>
                                 </Grid>
                             </>
                         ) : (
@@ -477,9 +494,9 @@ const Checkout = observer(() => {
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <YMaps
                                         enterprise
-                                        query={{ apikey: "05e2ef52-4f18-474e-b223-9e4092d9f9bc", }}
+                                        query={{ apikey: "05e2ef52-4f18-474e-b223-9e4092d9f9bc" }}
                                     >
-                                        <SuggestComponent value={order.city} />
+                                        <SuggestComponent />
                                     </YMaps>
                                 </Grid>
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
@@ -635,7 +652,7 @@ const Checkout = observer(() => {
                                     <Divider component="li" />
                                     <ListItem>
                                         <ListItemText
-                                            primary={(order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи') + ' ' + getDaysDelivery(order.delivery_days)}
+                                            primary={(order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи') + (order.delivery_days.length > 0 ? ' (' : '') + getDaysDelivery(order.delivery_days) + (order.delivery_days.length > 0 ? ')' : '')}
                                             secondary={order.delivery_sum === 0 ? <Button variant="text" size="small" onClick={calcDelivery}>{loadShipping ? <CircularProgress color="primary" size={20} /> : "Рассчитать"}</Button> : order.delivery_sum.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
                                             sx={{
                                                 "& span": {

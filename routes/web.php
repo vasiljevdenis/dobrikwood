@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\CdekController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Notifications\SendNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +24,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/api/catalog', function () {
     $json = DB::select('select * from categories');
     return $json;
+});
+Route::get('/api/catalog-random', function () {
+    $data = DB::table('catalog')
+                ->inRandomOrder()
+                ->limit(9)
+                ->get();
+    return $data;
 });
 
 Route::get('/api/catalog/{category}', function ($category) {
@@ -85,9 +95,39 @@ Route::post('/api/cart/goods', function (Request $request) {
 });
 
 Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
-Route::get('/api/cdek/neworder', [CdekController::class, 'createOrder']);
+// Route::get('/api/cdek/neworder', [CdekController::class, 'createOrder']);
 
 Route::post('/api/order/new', [OrderController::class, 'newOrder']);
+Route::get('/api/order/notification', function (Request $request) {
+    $db = DB::table('orders')
+    ->where('id', '=', (int) $request->input('id'))
+    ->get()[0];
+    Notification::route('chat_id', config('services.telegram-bot-api.chatid'))
+        ->route('id', $db->id)
+        ->route('name', $db->name)
+        ->route('lastName', $db->lastName)
+        ->route('phone', $db->phone)
+        ->route('email', $db->email)
+        ->route('nameSecond', $db->nameSecond)
+        ->route('lastNameSecond', $db->lastNameSecond)
+        ->route('phoneSecond', $db->phoneSecond)
+        ->route('price', $db->price)
+        ->route('delivery', $db->delivery)
+        ->route('delivery_sum', $db->delivery_sum)
+        ->route('delivery_type', $db->delivery_type)
+        ->route('delivery_days', $db->delivery_days)
+        ->route('date', $db->date)
+        ->route('goods', $db->goods)
+        ->route('note', $db->note)
+        ->notify(new SendNotification);
+});
+Route::get('/api/order/mail', function (Request $request) {
+    $db = DB::table('orders')
+    ->where('id', '=', (int) $request->input('id'))
+    ->get()[0];
+    $mc = new MailController();
+    return $mc->index($db);
+});
 
 Route::post('/api/payment', [PaymentController::class, 'yooKassa']);
 

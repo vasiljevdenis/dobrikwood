@@ -6,6 +6,7 @@ import slide2 from '../../images/002.png';
 import slide3 from '../../images/003.png';
 import slide4 from '../../images/004.png';
 import slide5 from '../../images/005.png';
+import RandomGoods from "../Components/RandomGoods";
 
 const Home = () => {
 
@@ -37,6 +38,7 @@ const Home = () => {
             <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
                 <Carousel items={items} arrows={false} autoplay={true} />
             </Box>
+            <RandomGoods />
         </>
     )
 };

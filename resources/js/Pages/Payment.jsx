@@ -37,8 +37,30 @@ const Payment = observer(() => {
       });
 
       checkout.on('success', () => {
-        checkout.destroy();
-        navigate('/success');
+        axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/notification?id=' + store.orderIdVal)
+          .then(res => {
+            let result = res.data;
+            if (result) {
+              axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/mail?id=' + store.orderIdVal)
+                .then(res => {
+                  let result = res.data;
+                  if (result) {
+                    checkout.destroy();
+                    navigate('/success');
+                  }
+                })
+                .catch(err => {
+                })
+
+                .finally(() => {
+                });
+            }
+          })
+          .catch(err => {
+          })
+
+          .finally(() => {
+          });
       });
       checkout.on('fail', () => {
         checkout.destroy();
