@@ -15,7 +15,7 @@ const RandomGoods = (props) => {
         arrows: true,
         dots: false,
         infinite: true,
-        cssEase: 'linear',
+        cssEase: 'cubic-bezier(0.4, 0, 0.2, 1)',
         variableWidth: false,
         variableHeight: true,
         speed: 500,
@@ -24,8 +24,8 @@ const RandomGoods = (props) => {
             {
                 breakpoint: 2000,
                 settings: {
-                    slidesToShow: 3,
-                    slidesToScroll: 3
+                    slidesToShow: slider.length >= 6 ? 3 : 2,
+                    slidesToScroll: slider.length >= 6 ? 3 : 2
                 }
             },
             {
@@ -59,7 +59,7 @@ const RandomGoods = (props) => {
 
     return (
         <Box p={0} m={0} sx={{ width: '100%', height: '100%', textAlign: 'center' }}>
-            <Typography gutterBottom variant="h4" component="div" textAlign={'left'}>
+            <Typography gutterBottom variant="h4" component="div" sx={{typography: {xs: 'h5', md: 'h4'}}} textAlign={'left'}>
                 {props.title}
             </Typography>
             <Slider {...settings}>

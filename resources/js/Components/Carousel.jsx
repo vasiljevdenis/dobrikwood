@@ -14,7 +14,7 @@ const Carousel = (props) => {
     arrows: props.arrows,
     dots: props.dots,
     infinite: true,
-    cssEase: 'linear',
+    cssEase: 'cubic-bezier(0.4, 0, 0.2, 1)',
     variableWidth: false,
     variableHeight: true,
     speed: 500,

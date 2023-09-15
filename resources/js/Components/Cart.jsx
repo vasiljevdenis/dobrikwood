@@ -1,6 +1,6 @@
 import { Box, Button, Grid, IconButton, Typography } from '@mui/material';
 import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { observer } from 'mobx-react-lite';
 import appState from '../store/appState';
@@ -8,6 +8,8 @@ import appState from '../store/appState';
 const Cart = observer(() => {
 
   const [store] = React.useState(appState);
+
+  const navigate = useNavigate();
 
   return (
     <Grid container sx={{
@@ -41,7 +43,15 @@ const Cart = observer(() => {
           }}>
             <ShoppingCartIcon />
           </IconButton>
-          <Typography variant="h6" component="span" color="white" sx={{
+          <Typography variant="h6" component="span" color="white" 
+          onClick={() => {
+            if (window.innerWidth > 600) {
+              return
+            } else {
+              navigate('/cart')
+            }
+          }}
+          sx={{
             background: '#60a47c',
             borderRadius: '4px',
             minWidth: '95.45px',

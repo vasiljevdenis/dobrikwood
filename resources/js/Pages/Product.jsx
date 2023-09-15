@@ -12,6 +12,7 @@ import axios from "axios";
 import Carousel from "../Components/Carousel";
 import appState from "../store/appState";
 import { observer } from "mobx-react-lite";
+import RandomGoods from "../Components/RandomGoods";
 
 const Product = observer(() => {
 
@@ -240,6 +241,9 @@ const Product = observer(() => {
                                 </Grid>
                             </CardContent>
                         </Card>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <RandomGoods title="Возможно Вам понравится" />
                     </Grid>
                 </Grid>
             )}

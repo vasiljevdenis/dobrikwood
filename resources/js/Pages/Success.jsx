@@ -2,8 +2,9 @@ import * as React from "react";
 import { observer } from "mobx-react-lite";
 import { Link as RouterLink } from 'react-router-dom';
 import appState from "../store/appState";
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RandomGoods from "../Components/RandomGoods";
 
 const Success = observer(() => {
 
@@ -18,16 +19,23 @@ const Success = observer(() => {
     store.changeOrderId(0);
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-            <Typography variant="h2" component="h2" m={2} textAlign={'center'}>
-                <CheckCircleIcon color="primary" fontSize="large" className="rotate" /> Заказ успешно оплачен!
-            </Typography>
-        <Divider />
-            <Button component={RouterLink} to="/catalog" variant="contained" sx={{
-                color: 'white',
-                mt: 1
-            }}>Продолжить покупки</Button>
-        </Box>
+        <>
+            <Box sx={{ py: 3, textAlign: 'center' }}>
+                <Typography variant="h2" component="h2" sx={{typography: {xs: 'h5', md: 'h2'}}} m={2} textAlign={'center'}>
+                    <CheckCircleIcon color="primary" fontSize="large" className="rotate" /> Заказ успешно оплачен!
+                </Typography>
+                <Divider />
+                <Button component={RouterLink} to="/catalog" variant="contained" sx={{
+                    color: 'white',
+                    mt: 1
+                }}>Продолжить покупки</Button>
+            </Box>
+            <Grid container p={2}>
+                <Grid item xs={12}>
+                    <RandomGoods title="Возможно Вам понравится" />
+                </Grid>
+            </Grid>
+        </>
     )
 });
 export default Success;

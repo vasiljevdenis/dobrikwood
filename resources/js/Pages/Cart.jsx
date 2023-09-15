@@ -96,34 +96,51 @@ const Cart = observer(() => {
                                 Корзина
                             </Typography>
                             <Grid container p={1} textAlign={'center'}>
-                            <Grid item xs={12} p={2}>
-                                <Alert severity="info">Стоимость доставки рассчитывается на странице оформления заказа</Alert>
-                            </Grid>
+                                <Grid item xs={12} p={2}>
+                                    <Alert severity="info">Стоимость доставки рассчитывается на странице оформления заказа</Alert>
+                                </Grid>
                                 {
                                     goods.map((el, i) => {
                                         return (
                                             <Grid key={'product' + i} item xs={12} p={1}>
                                                 <Badge sx={{ '& .MuiBadge-badge': { p: 0 }, width: '100%' }} badgeContent={<IconButton sx={{ p: 0 }} title="Удалить" onClick={() => removeFromCart(el.id)}><CloseIcon fontSize="small" sx={{ color: 'white' }} /></IconButton>} color="error">
-                                                    <Card sx={{ display: 'flex', width: '100%' }}>
-                                                        <CardMedia
-                                                            component="img"
-                                                            sx={{ width: 150 }}
-                                                            image={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg'}
-                                                            alt={el.name}
-                                                        />
-                                                        <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
-                                                            <CardContent sx={{ flex: '1 0 auto' }}>
-                                                                <Link href={'/catalog/' + el.category + '/' + el.path} underline="none" target="_blank">
-                                                                <Typography component="div" variant="h5" color={'text.primary'}>
-                                                                    {el.name}
-                                                                </Typography>
-                                                                </Link>
-                                                                <Typography variant="subtitle1" color="text.secondary" component="div">
-                                                                    Код товара: {el.id}
-                                                                </Typography>
-                                                            </CardContent>
-                                                        </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'row', textAlign: 'left', alignItems: 'center', ml: 'auto' }}>
+                                                    <Card sx={{ display: { xs: 'block', md: 'flex' }, width: '100%' }}>
+                                                        {window.innerWidth > 900 ? (
+                                                            <>
+                                                                <CardMedia
+                                                                    component="img"
+                                                                    sx={{ width: 150 }}
+                                                                    image={import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg'}
+                                                                    alt={el.name}
+                                                                />
+                                                                <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                                                                    <CardContent sx={{ flex: '1 0 auto' }}>
+                                                                        <Link href={'/catalog/' + el.category + '/' + el.path} underline="none" target="_blank">
+                                                                            <Typography component="div" variant="h5" color={'text.primary'}>
+                                                                                {el.name}
+                                                                            </Typography>
+                                                                        </Link>
+                                                                        <Typography variant="subtitle1" color="text.secondary" component="div">
+                                                                            Код товара: {el.id}
+                                                                        </Typography>
+                                                                    </CardContent>
+                                                                </Box>
+                                                            </>
+                                                        ) : (
+                                                            <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                                                                <CardContent sx={{ flex: '1 0 auto' }}>
+                                                                    <Link href={'/catalog/' + el.category + '/' + el.path} underline="none" target="_blank">
+                                                                        <Typography component="div" variant="h5" color={'text.primary'}>
+                                                                            {el.name}
+                                                                        </Typography>
+                                                                    </Link>
+                                                                    <Typography variant="subtitle1" color="text.secondary" component="div">
+                                                                        Код товара: {el.id}
+                                                                    </Typography>
+                                                                </CardContent>
+                                                            </Box>
+                                                        )}
+                                                        <Box sx={{ display: 'flex', flexDirection: 'row', textAlign: { xs: 'center', md: 'left' }, alignItems: 'center', ml: 'auto' }}>
                                                             <CardContent sx={{ flex: '1 0 auto' }}>
                                                                 <Typography component="div" variant="subtitle1">
                                                                     {el.price === 0 ? '' : el.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
@@ -133,7 +150,7 @@ const Cart = observer(() => {
                                                                 </Typography>
                                                             </CardContent>
                                                         </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'row', textAlign: 'left', alignItems: 'center' }}>
+                                                        <Box sx={{ display: { xs: 'block', md: 'flex' }, flexDirection: 'row', textAlign: { xs: 'center', md: 'left' }, alignItems: 'center' }}>
                                                             <IconButton color="primary" aria-label="Minus button" onClick={() => decreaseQuantity(el.id, el.price)}>
                                                                 <RemoveCircleIcon />
                                                             </IconButton>
@@ -147,7 +164,7 @@ const Cart = observer(() => {
                                                                 <AddCircleIcon />
                                                             </IconButton>
                                                         </Box>
-                                                        <Box sx={{ display: 'flex', flexDirection: 'row', textAlign: 'left', alignItems: 'center' }}>
+                                                        <Box sx={{ display: { xs: 'block', md: 'flex' }, flexDirection: 'row', textAlign: { xs: 'center', md: 'left' }, alignItems: 'center' }}>
                                                             <Typography variant="h5" component="span" sx={{
                                                                 px: 1.5,
                                                                 py: 0.1,
@@ -164,14 +181,14 @@ const Cart = observer(() => {
                                         );
                                     })
                                 }
-                                <Grid item xs={12} p={1} textAlign={'right'}>
+                                <Grid item xs={12} p={1} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
                                     <Typography variant="h4" component="span" gutterBottom sx={{
                                         px: 1.5,
                                         py: 0.1,
                                         verticalAlign: 'middle'
                                     }}>Итого: {cartState.cartTotal.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
                                 </Grid>
-                                <Grid item xs={12} p={1} textAlign={'right'}>
+                                <Grid item xs={12} p={1} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
                                     <Button component={RouterLink} to="/checkout" variant="contained" sx={{
                                         color: 'white',
                                         mt: 1,

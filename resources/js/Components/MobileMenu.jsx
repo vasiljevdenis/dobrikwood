@@ -49,22 +49,22 @@ const MobileMenu = observer(() => {
         },
         {
             title: 'О нас',
-            url: '',
+            url: '/about',
             icon: <InfoIcon />
         },
         {
             title: 'Доставка и оплата',
-            url: '',
+            url: '/delivery',
             icon: <LocalShippingIcon />
         },
         {
             title: 'Контакты',
-            url: '',
+            url: '/contact',
             icon: <ContactPhoneIcon />
         },
         {
             title: 'Отзывы',
-            url: '',
+            url: '/reviews',
             icon: <ReviewsIcon />
         }
     ];

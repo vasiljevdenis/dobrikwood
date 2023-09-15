@@ -88,3 +88,10 @@
   a:-webkit-any-link {
     text-decoration: none;
   }
+
+  ymaps[class*="inner-panes"] {
+    border-radius: 12px;
+  }
+  ymaps[class*="-balloon"] {
+    border-radius: 12px;
+  }

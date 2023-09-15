@@ -42,6 +42,12 @@ const Home = () => {
                 <Grid item xs={12}>
                     <RandomGoods title="Новинки" type="new" />
                 </Grid>
+                <Grid item xs={12}>
+                    <RandomGoods title="Хиты продаж" type="top" />
+                </Grid>
+                <Grid item xs={12}>
+                    <RandomGoods title="Акции" type="sale" />
+                </Grid>
             </Grid>
         </>
     )

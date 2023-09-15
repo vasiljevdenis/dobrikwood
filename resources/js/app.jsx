@@ -6,7 +6,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { CssBaseline, Grid, ThemeProvider, createTheme } from '@mui/material';
 import Home from './Pages/Home';
-// import About from './Pages/About';
+import About from './Pages/About';
 // import Feedback from './Pages/Feedback';
 import Error404 from './Pages/Error404';
 import Header from './Components/Header';
@@ -24,6 +24,10 @@ import Feedback from './Components/Feedback';
 import ScrollToTop from './Components/ScrollToTop';
 import Payment from './Pages/Payment';
 import Success from './Pages/Success';
+import Fail from './Pages/Fail';
+import Delivery from './Pages/Delivery';
+import Contact from './Pages/Contact';
+import Reviews from './Pages/Reviews';
 
 const newTheme = createTheme({
   palette: {
@@ -37,10 +41,12 @@ const newTheme = createTheme({
       'sans-serif'
     ].join(','),
     body1: {
-      fontFamily: 'Helvetica, sans-serif'
+      fontFamily: 'Helvetica, sans-serif',
+      letterSpacing: '0.5px'
     },
     body2: {
-      fontFamily: 'Helvetica, sans-serif'
+      fontFamily: 'Helvetica, sans-serif',
+      letterSpacing: '0.5px'
     }
   },
   components: {
@@ -77,7 +83,10 @@ ReactDOM.createRoot(document.getElementById('app')).render(
           <Horizontalbar />
           <Routes>
             <Route path='/' element={<Home />} />
-            {/* <Route path='/about' element={<About />} /> */}
+            <Route path='/about' element={<About />} />
+            <Route path='/delivery' element={<Delivery />} />
+            <Route path='/contact' element={<Contact />} />
+            <Route path='/reviews' element={<Reviews />} />
             {/* <Route path='/feedback' element={<Feedback />} /> */}
             <Route path='/catalog' element={<Catalog />} />
             <Route path='/catalog/:categoryName' element={<Category />} />
@@ -86,6 +95,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
             <Route path='/checkout' element={<Checkout />} />
             <Route path='/payment' element={<Payment />} />
             <Route path='/success' element={<Success />} />
+            <Route path='/fail' element={<Fail />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Grid>
