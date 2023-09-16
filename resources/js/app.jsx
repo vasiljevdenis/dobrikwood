@@ -28,6 +28,7 @@ import Fail from './Pages/Fail';
 import Delivery from './Pages/Delivery';
 import Contact from './Pages/Contact';
 import Reviews from './Pages/Reviews';
+import CustomOrder from './Components/CustomOrder';
 
 const newTheme = createTheme({
   palette: {
@@ -103,6 +104,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
       <Footer />
       <Notification />
       <Feedback />
+      <CustomOrder />
     </ThemeProvider>
   </BrowserRouter>
 );

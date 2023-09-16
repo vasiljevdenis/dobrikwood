@@ -115,6 +115,7 @@ Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
 // Route::get('/api/cdek/neworder', [CdekController::class, 'createOrder']);
 
 Route::post('/api/order/new', [OrderController::class, 'newOrder']);
+Route::post('/api/customorder/new', [OrderController::class, 'newCustomOrder']);
 Route::get('/api/order/notification', function (Request $request) {
     $db = DB::table('orders')
         ->where('id', '=', (int) $request->input('id'))

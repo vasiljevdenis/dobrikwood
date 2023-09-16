@@ -15,6 +15,10 @@ const Sidebar = observer(() => {
         py: 0
     };
 
+    const openCustomOrderModal = () => {
+        store.openCustomOrderModal();
+    }
+
     return (
         <Box sx={{ p: 0 }}>
             <List dense={false} sx={{ p: 0 }}>
@@ -49,16 +53,18 @@ const Sidebar = observer(() => {
                     })
                 }
                 <ListItem sx={listItemStyle}>
-                    <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
                         <ListItemText
                             primary="Мебель на заказ"
                             sx={{
+                                color: '#212529',
+                                textTransform: 'uppercase',
+                                cursor: 'pointer',
                                 "& span": {
                                     fontFamily: 'FuturaPTDemi, sans-serif'
                                 }
                             }}
+                            onClick={openCustomOrderModal}
                         />
-                    </Link>
                 </ListItem>
             </List>
         </Box>

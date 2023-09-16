@@ -13,6 +13,7 @@ class appState {
     street: '',
     house: ''
   };
+  customOrderModal = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -44,6 +45,14 @@ class appState {
     this.address = a;
   }
 
+  openCustomOrderModal() {
+    this.customOrderModal = true;
+  }
+
+  closeCustomOrderModal() {
+    this.customOrderModal = false;
+  }
+
   get allCategories() {
     return this.categories;
   }
@@ -68,6 +77,10 @@ class appState {
 
   get addressVal() {
     return this.address;
+  }
+
+  get customOrderModalVal() {
+    return this.customOrderModal;
   }
 
 }

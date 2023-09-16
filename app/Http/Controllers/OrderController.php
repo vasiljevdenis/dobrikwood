@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\SendNotificationCustom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 
 class OrderController extends Controller
 {
@@ -15,7 +18,7 @@ class OrderController extends Controller
         );
         return json_encode($result);
     }
-    
+
     public function newOrder(Request $request)
     {
         $id = DB::table('orders')->insertGetId([
@@ -37,12 +40,47 @@ class OrderController extends Controller
             'ip_adress' => $request->ip(),
             'cdek' => $request->has('cdek') ? json_encode($request->input('cdek')) : null
         ]);
-    if (isset($id)) {
-        $result = array(
-            "status" => true,
-            "order_id" => $id
-        );
-        return json_encode($result);
-    }        
+        if (isset($id)) {
+            $result = array(
+                "status" => true,
+                "order_id" => $id
+            );
+            return json_encode($result);
+        }
+    }
+    public function newCustomOrder(Request $request)
+    {
+        Notification::route('chat_id', config('services.telegram-bot-api.chatid'))
+            ->route('name', $request->input('name'))
+            ->route('phone', $request->input('phone'))
+            ->route('type', $request->input('type'))
+            ->route('material', $request->input('material'))
+            ->route('color', $request->input('color'))
+            ->route('size', $request->input('size'))
+            ->route('other', $request->input('other'))
+            ->notify(new SendNotificationCustom);
+        if ($request->hasFile('file')) {
+            $response = Http::attach(
+                'document',
+                file_get_contents($request->file),
+                'attachment.' . $request->file->extension()
+            )->post('https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN', '') . '/sendDocument', [
+                'chat_id' => env('TELEGRAM_CHATID', ''),
+                'caption' => 'Файл для заказа ↑↑↑'
+            ]);
+            if ($response->ok()) {
+                $result = array(
+                    "status" => true
+                );
+                return json_encode($result);
+            } else {
+                return $this->apiError('Ошибка!');
+            }
+        } else {
+            $result = array(
+                "status" => true
+            );
+            return json_encode($result);
+        }
     }
 }
