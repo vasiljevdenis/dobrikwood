@@ -91,7 +91,7 @@ export default function Search() {
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
-      }}
+      }}      
       renderInput={(params) => (
         <FormControl sx={{ mr: 1, maxWidth: {xs: '250px', md: '350px'}, width: '100%' }} variant="outlined">
           <TextField

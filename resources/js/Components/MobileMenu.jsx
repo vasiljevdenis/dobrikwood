@@ -78,6 +78,10 @@ const MobileMenu = observer(() => {
         <KingBedIcon />
     ];
 
+    const openCustomOrderModal = () => {
+        store.openCustomOrderModal();
+    }
+
     const list = () => (
         <Box
             sx={{ width: '70vw' }}
@@ -125,7 +129,7 @@ const MobileMenu = observer(() => {
                         </ListItemButton>
                     </ListItem>
                 ))}
-                <ListItem disablePadding component={RouterLink} to={"/catalog/"}>
+                <ListItem disablePadding>
                     <ListItemButton>
                         <ListItemIcon sx={{
                             color: '#60a47c'
@@ -138,7 +142,9 @@ const MobileMenu = observer(() => {
                             "& span": {
                                 fontFamily: 'FuturaPTDemi, sans-serif'
                             }
-                        }} />
+                        }}
+                        onClick={openCustomOrderModal}
+                         />
                     </ListItemButton>
                 </ListItem>
             </List>

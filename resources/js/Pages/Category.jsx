@@ -48,10 +48,10 @@ const Category = observer(() => {
                         {
                             goods.map((el, i) => {
                                 return (
-                                    <Grid key={'product' + i} item xs={12} sm={6} md={4} p={1} textAlign={'center'}>
+                                    <Grid key={'product' + i} item xs={12} sm={6} md={4} lg={3} p={1} textAlign={'center'}>
                                         <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
-                                            <Card sx={{ maxWidth: 345, mx: 'auto' }}>
-                                                <CardActionArea component="div">
+                                            <Card sx={{ maxWidth: '18rem', mx: 'auto', height: '100%' }}>
+                                                <CardActionArea component="div" sx={{height: '100%'}}>
                                                     <Carousel items={[
                                                         {
                                                             image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg',
@@ -67,7 +67,7 @@ const Category = observer(() => {
                                                         }
                                                     ]} dots={true} arrows={false} />
                                                     <CardContent>
-                                                        <Typography gutterBottom variant="h5" component="div">
+                                                        <Typography gutterBottom variant="h6" component="div">
                                                             {el.name}
                                                         </Typography>
                                                         <Divider />

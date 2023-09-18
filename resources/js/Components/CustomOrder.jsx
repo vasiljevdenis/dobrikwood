@@ -36,7 +36,7 @@ const CustomOrder = observer(() => {
   }
 
   const changeName = (val) => {
-    setOrder({ ...order, name: val });
+    setOrder({ ...order, name: val.slice(0, 1).toUpperCase() + val.slice(1) });
   }
   const changePhone = (val) => {
     setOrder({ ...order, phone: val });

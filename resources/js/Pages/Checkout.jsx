@@ -118,11 +118,11 @@ const Checkout = observer(() => {
     }
 
     const changeName = (val) => {
-        setOrder({ ...order, name: val });
+        setOrder({ ...order, name: val.slice(0, 1).toUpperCase() + val.slice(1) });
     }
 
     const changeLastName = (val) => {
-        setOrder({ ...order, lastName: val });
+        setOrder({ ...order, lastName: val.slice(0, 1).toUpperCase() + val.slice(1) });
     }
 
     const changePhone = (val) => {
@@ -168,11 +168,11 @@ const Checkout = observer(() => {
     }
 
     const changeRecipientName = (val) => {
-        setOrder({ ...order, recipient: { ...order.recipient, name: val } });
+        setOrder({ ...order, recipient: { ...order.recipient, name: val.slice(0, 1).toUpperCase() + val.slice(1) } });
     }
 
     const changeRecipientLastName = (val) => {
-        setOrder({ ...order, recipient: { ...order.recipient, lastName: val } });
+        setOrder({ ...order, recipient: { ...order.recipient, lastName: val.slice(0, 1).toUpperCase() + val.slice(1) } });
     }
 
     const changeRecipientPhone = (val) => {

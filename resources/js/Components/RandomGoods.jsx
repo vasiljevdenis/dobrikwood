@@ -24,8 +24,8 @@ const RandomGoods = (props) => {
             {
                 breakpoint: 2000,
                 settings: {
-                    slidesToShow: slider.length >= 6 ? 3 : 2,
-                    slidesToScroll: slider.length >= 6 ? 3 : 2
+                    slidesToShow: slider.length >= 3 ? 3 : 2,
+                    slidesToScroll: slider.length >= 3 ? 3 : 2
                 }
             },
             {
@@ -58,13 +58,13 @@ const RandomGoods = (props) => {
     }, []);
 
     return (
-        <Box p={0} m={0} sx={{ width: '100%', height: '100%', textAlign: 'center' }}>
-            <Typography gutterBottom variant="h4" component="div" sx={{typography: {xs: 'h5', md: 'h4'}}} textAlign={'left'}>
+        <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
+            <Typography gutterBottom variant="h4" component="div" sx={{typography: {xs: 'h6', md: 'h5'}, mt: 1}} textAlign={'left'}>
                 {props.title}
             </Typography>
             <Slider {...settings}>
                 {slider.map((el, i) => (
-                    <Card key={'product' + i} sx={{ maxWidth: 345, mx: 'auto' }}>
+                    <Card key={'product' + i} sx={{ maxWidth: '18rem', mx: 'auto' }}>
                         <CardActionArea component="div">
                             <Carousel items={[
                                 {
@@ -81,7 +81,7 @@ const RandomGoods = (props) => {
                                 }
                             ]} dots={true} arrows={false} loading="eager" />
                             <CardContent>
-                                <Typography component={RouterLink} to={'/catalog/' + el.category + '/' + el.path} gutterBottom variant="h5" color={'text.primary'}>
+                                <Typography component={RouterLink} to={'/catalog/' + el.category + '/' + el.path} gutterBottom variant="h6" color={'text.primary'}>
                                     {el.name}
                                 </Typography>
                                 <Divider />
