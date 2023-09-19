@@ -103,7 +103,7 @@ Route::post('/api/catalog/{category}/{product}/rate', function (Request $request
     return $json;
 });
 
-Route::get('/api/catalog/new', function (Request $request) {
+Route::post('/api/catalog/new', function (Request $request) {
     DB::beginTransaction();
     
     try {
