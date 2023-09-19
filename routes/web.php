@@ -111,9 +111,8 @@ Route::get('/api/catalog/new', function (Request $request) {
         foreach ($request->except(['_token', 'images']) as $key => $value) {
             $catalogData[$key] = $value;
         }
-        $catalogData['images'] = count($request->file('images'));
         
-        $catalogId = DB::table('catalog')->insertGetId($catalogData);
+        $images_arr = [];
         
         if ($request->hasFile('images')) {
             $num = 1;
@@ -121,9 +120,13 @@ Route::get('/api/catalog/new', function (Request $request) {
                 $extension = $image->getClientOriginalExtension();
                 $filename = $request->input('path') . $num . '.' . $extension;
                 $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
+                array_push($images_arr, $path);
                 $num++;           
             }
         }
+
+        $catalogData['images'] = json_encode($images_arr);
+        $catalogId = DB::table('catalog')->insertGetId($catalogData);
         
         DB::commit();
         
