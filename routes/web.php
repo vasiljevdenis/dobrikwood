@@ -126,6 +126,10 @@ Route::post('/api/catalog/new', function (Request $request) {
         }
 
         $catalogData['images'] = json_encode($images_arr);
+        $catalogData['rate_history'] = '[5]';
+        $catalogData['meta_title'] = '';
+        $catalogData['meta_description'] = '';
+        $catalogData['meta_keywords'] = '';
         $catalogId = DB::table('catalog')->insertGetId($catalogData);
         
         DB::commit();
