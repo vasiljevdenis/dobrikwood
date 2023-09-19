@@ -6,6 +6,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Notifications\SendNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
@@ -146,6 +147,11 @@ Route::get('/api/order/mail', function (Request $request) {
     $mc = new MailController();
     return $mc->index($db);
 });
+
+Auth::routes();
+
+Route::post('/user/changeemail', [UserController::class, 'changeEmail']);
+Route::post('/user/changepassword', [UserController::class, 'changePassword']);
 
 Route::post('/api/payment', [PaymentController::class, 'yooKassa']);
 
