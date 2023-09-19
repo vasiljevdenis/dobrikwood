@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,6 +101,38 @@ Route::post('/api/catalog/{category}/{product}/rate', function (Request $request
     $newRate = ceil($newRate);
     $json = DB::update('update catalog set rate = :rate, rate_history = :rateHistory where id = :id', ['rate' => $newRate, 'rateHistory' => json_encode($rate_history), 'id' => $id]);
     return $json;
+});
+
+Route::get('/api/catalog/new', function (Request $request) {
+    DB::beginTransaction();
+    
+    try {
+        $catalogData = [];
+        foreach ($request->except(['_token', 'images']) as $key => $value) {
+            $catalogData[$key] = $value;
+        }
+        $catalogData['images'] = count($request->file('images'));
+        
+        $catalogId = DB::table('catalog')->insertGetId($catalogData);
+        
+        if ($request->hasFile('images')) {
+            $num = 1;
+            foreach ($request->file('images') as $image) {
+                $extension = $image->getClientOriginalExtension();
+                $filename = $request->input('path') . $num . '.' . $extension;
+                $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
+                $num++;           
+            }
+        }
+        
+        DB::commit();
+        
+        return redirect()->back()->with('success', 'Form data saved successfully.');
+    } catch (\Exception $e) {
+        DB::rollback();
+        
+        return redirect()->back()->with('error', 'Error saving form data.');
+    }    
 });
 
 Route::post('/api/cart/goods', function (Request $request) {
