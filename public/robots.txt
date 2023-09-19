@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /payment
+Disallow: /success
+Disallow: /fail
+Sitemap: https://dobrik-wood.ru/sitemap.xml
+Host: dobrik-wood.ru

@@ -6,7 +6,7 @@ const About = () => {
   return (
     <>
       <Typography variant="h4" component="h2" m={2}>
-        Контакты
+        О нас
       </Typography>
       <Box sx={{
         maxWidth: '500px',
