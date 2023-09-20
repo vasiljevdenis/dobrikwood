@@ -153,6 +153,20 @@ Route::post('/api/catalog/delete', function (Request $request) {
         }
     }
 });
+Route::get('/info', function () {
+    $res = DB::table('catalog')
+        ->select('images')
+        ->whereIn('id', [1, 21])
+        ->get();
+    if (isset($res)) {
+        foreach($res as $arr) {
+            foreach ($arr as $path) {
+                dd(str_replace('storage', 'public', $path));
+                $p = Storage::delete(str_replace('storage', 'public', $path));
+            }
+        }
+    }
+});
 
 Route::post('/api/cart/goods', function (Request $request) {
     $goods = $request->input('goods');
