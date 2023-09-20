@@ -104,9 +104,6 @@ Route::post('/api/catalog/{category}/{product}/rate', function (Request $request
 });
 
 Route::post('/api/catalog/new', function (Request $request) {
-    DB::beginTransaction();
-
-    try {
         $catalogData = [];
         foreach ($request->except(['_token', 'images']) as $key => $value) {
             $catalogData[$key] = $value;
@@ -131,15 +128,9 @@ Route::post('/api/catalog/new', function (Request $request) {
         $catalogData['meta_description'] = '';
         $catalogData['meta_keywords'] = '';
         $catalogId = DB::table('catalog')->insertGetId($catalogData);
-
-        DB::commit();
-
-        return redirect()->back()->with('success', 'Form data saved successfully.');
-    } catch (\Exception $e) {
-        DB::rollback();
-
-        return redirect()->back()->with('error', 'Error saving form data.');
-    }
+        if ($catalogId) {
+            return $catalogId;
+        }
 });
 Route::post('/api/catalog/delete', function (Request $request) {
     $goods = $request->input('ids');
