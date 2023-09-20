@@ -160,9 +160,8 @@ Route::get('/info', function () {
         ->get();
     if (isset($res)) {
         foreach($res as $arr) {
-            foreach ($arr as $path) {
-                dd(str_replace('storage', 'public', $path));
-                $p = Storage::delete(str_replace('storage', 'public', $path));
+            foreach ($arr as $key => $value) {
+                dd(str_replace('storage', 'public', $value));
             }
         }
     }
