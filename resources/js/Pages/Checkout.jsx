@@ -494,7 +494,10 @@ const Checkout = observer(() => {
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <YMaps
                                         enterprise
-                                        query={{ apikey: "05e2ef52-4f18-474e-b223-9e4092d9f9bc" }}
+                                        query={{ 
+                                            apikey: import.meta.env.VITE_APP_YMAPS_API_KEY,
+                                            suggest_apikey: import.meta.env.VITE_APP_YMAPS_SUGGEST_API_KEY
+                                         }}
                                     >
                                         <SuggestComponent />
                                     </YMaps>

@@ -155,20 +155,7 @@ const Product = observer(() => {
                             <CardContent sx={{p: {xs: 0, sm: 2}}}>
                                 <Grid container>
                                     <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: { xs: '100vw', md: '75vw' } }}>
-                                        <Carousel items={[
-                                            {
-                                                image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '1.jpg',
-                                                link: '#'
-                                            },
-                                            {
-                                                image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '2.jpg',
-                                                link: '#'
-                                            },
-                                            {
-                                                image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + product.category + '/' + product.path + '3.jpg',
-                                                link: '#'
-                                            }
-                                        ]} dots={true} />
+                                        <Carousel items={ JSON.parse(product.images).map(item => {return {image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#'}}) } dots={true} />
                                     </Grid>
                                     <Grid item xs={12} md={6} p={1}>
                                         <Typography gutterBottom variant="h4" component="h1">

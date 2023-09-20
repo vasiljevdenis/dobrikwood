@@ -66,20 +66,7 @@ const RandomGoods = (props) => {
                 {slider.map((el, i) => (
                     <Card key={'product' + i} sx={{ maxWidth: '18rem', mx: 'auto' }}>
                         <CardActionArea component="div">
-                            <Carousel items={[
-                                {
-                                    image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg',
-                                    link: '#'
-                                },
-                                {
-                                    image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '2.jpg',
-                                    link: '#'
-                                },
-                                {
-                                    image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '3.jpg',
-                                    link: '#'
-                                }
-                            ]} dots={true} arrows={false} loading="eager" />
+                            <Carousel items={ JSON.parse(el.images).map(item => {return {image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#'}}) } dots={true} arrows={false} loading="eager" />
                             <CardContent>
                                 <Typography component={RouterLink} to={'/catalog/' + el.category + '/' + el.path} gutterBottom variant="h6" color={'text.primary'}>
                                     {el.name}

@@ -120,7 +120,7 @@ Route::post('/api/catalog/new', function (Request $request) {
                 $extension = $image->getClientOriginalExtension();
                 $filename = $request->input('path') . $num . '.' . $extension;
                 $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
-                array_push($images_arr, $path);
+                array_push($images_arr, str_replace("public", "storage", $path, 1));
                 $num++;           
             }
         }

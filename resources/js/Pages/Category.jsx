@@ -52,20 +52,7 @@ const Category = observer(() => {
                                         <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
                                             <Card sx={{ maxWidth: '18rem', mx: 'auto', height: '100%' }}>
                                                 <CardActionArea component="div" sx={{height: '100%'}}>
-                                                    <Carousel items={[
-                                                        {
-                                                            image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '1.jpg',
-                                                            link: '#'
-                                                        },
-                                                        {
-                                                            image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '2.jpg',
-                                                            link: '#'
-                                                        },
-                                                        {
-                                                            image: import.meta.env.VITE_APP_BASE_URL + '/storage/images/' + el.category + '/' + el.path + '3.jpg',
-                                                            link: '#'
-                                                        }
-                                                    ]} dots={true} arrows={false} />
+                                                    <Carousel items={ JSON.parse(el.images).map(item => {return {image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#'}}) } dots={true} arrows={false} />
                                                     <CardContent>
                                                         <Typography gutterBottom variant="h6" component="div">
                                                             {el.name}
