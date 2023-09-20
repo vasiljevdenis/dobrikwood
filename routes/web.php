@@ -150,7 +150,8 @@ Route::post('/api/catalog/delete', function (Request $request) {
     if (isset($res)) {
         foreach($res as $arr) {
             foreach ($arr as $path) {
-                Storage::delete(str_replace('storage', 'public', $path));
+                $p = Storage::delete(str_replace('storage', 'public', $path));
+                print_r($p);
             }
         }
         $resp = DB::table('catalog')
