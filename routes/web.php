@@ -160,11 +160,11 @@ Route::get('/info', function () {
         ->get();
     if (isset($res)) {
         dd($res);
-        // foreach($res as $arr) {
-        //     foreach ($arr as $key => $value) {
-        //         dd(str_replace('storage', 'public', $value));
-        //     }
-        // }
+        foreach($res as $key => $value) {
+            foreach ($value->images as $k => $v) {
+                dd(str_replace('storage', 'public', $v));
+            }
+        }
     }
 });
 
