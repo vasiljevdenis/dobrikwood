@@ -139,10 +139,9 @@ Route::post('/api/catalog/delete', function (Request $request) {
         ->whereIn('id', $goods)
         ->get();
     if (isset($res)) {
-        foreach($res as $arr) {
-            foreach ($arr as $path) {
-                $p = Storage::delete(str_replace('storage', 'public', $path));
-                print_r($p);
+        foreach($res as $key => $value) {
+            foreach (json_decode($value->images) as $k => $v) {
+                $p = Storage::delete(str_replace('storage', 'public', $v));
             }
         }
         $resp = DB::table('catalog')
@@ -150,20 +149,6 @@ Route::post('/api/catalog/delete', function (Request $request) {
             ->delete();
         if (isset($resp)) {
             return $resp;
-        }
-    }
-});
-Route::get('/info', function () {
-    $res = DB::table('catalog')
-        ->select('images')
-        ->whereIn('id', [1, 21])
-        ->get();
-    if (isset($res)) {
-        dd($res);
-        foreach($res as $key => $value) {
-            foreach ($value->images as $k => $v) {
-                dd(str_replace('storage', 'public', $v));
-            }
         }
     }
 });
