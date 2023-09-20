@@ -159,11 +159,12 @@ Route::get('/info', function () {
         ->whereIn('id', [1, 21])
         ->get();
     if (isset($res)) {
-        foreach($res as $arr) {
-            foreach ($arr as $key => $value) {
-                dd(str_replace('storage', 'public', $value));
-            }
-        }
+        dd($res);
+        // foreach($res as $arr) {
+        //     foreach ($arr as $key => $value) {
+        //         dd(str_replace('storage', 'public', $value));
+        //     }
+        // }
     }
 });
 
