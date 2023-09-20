@@ -105,15 +105,15 @@ Route::post('/api/catalog/{category}/{product}/rate', function (Request $request
 
 Route::post('/api/catalog/new', function (Request $request) {
     DB::beginTransaction();
-    
+
     try {
         $catalogData = [];
         foreach ($request->except(['_token', 'images']) as $key => $value) {
             $catalogData[$key] = $value;
         }
-        
+
         $images_arr = [];
-        
+
         if ($request->hasFile('images')) {
             $num = 1;
             foreach ($request->file('images') as $image) {
@@ -121,7 +121,7 @@ Route::post('/api/catalog/new', function (Request $request) {
                 $filename = $request->input('path') . $num . '.' . $extension;
                 $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
                 array_push($images_arr, str_replace("public", "storage", $path, 1));
-                $num++;           
+                $num++;
             }
         }
 
@@ -131,15 +131,36 @@ Route::post('/api/catalog/new', function (Request $request) {
         $catalogData['meta_description'] = '';
         $catalogData['meta_keywords'] = '';
         $catalogId = DB::table('catalog')->insertGetId($catalogData);
-        
+
         DB::commit();
-        
+
         return redirect()->back()->with('success', 'Form data saved successfully.');
     } catch (\Exception $e) {
         DB::rollback();
-        
+
         return redirect()->back()->with('error', 'Error saving form data.');
-    }    
+    }
+});
+Route::post('/api/catalog/delete', function (Request $request) {
+    $goods = $request->input('ids');
+    $res = DB::table('catalog')
+        ->select('images')
+        ->whereIn('id', $goods)
+        ->get();
+    if (isset($res)) {
+        foreach($res as $json) {
+            $arr = json_decode($json);
+            foreach ($arr as $path) {
+                Storage::delete(str_replace('storage', 'public', $path, 1));
+            }
+        }
+        $resp = DB::table('catalog')
+            ->whereIn('id', $goods)
+            ->delete();
+        if (isset($resp)) {
+            return $resp;
+        }
+    }
 });
 
 Route::post('/api/cart/goods', function (Request $request) {
