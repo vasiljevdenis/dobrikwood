@@ -151,7 +151,7 @@ Route::post('/api/catalog/delete', function (Request $request) {
         foreach($res as $json) {
             $arr = json_decode($json);
             foreach ($arr as $path) {
-                Storage::delete(str_replace('storage', 'public', $path, 1));
+                Storage::delete(str_replace('storage', 'public', $path));
             }
         }
         $resp = DB::table('catalog')
