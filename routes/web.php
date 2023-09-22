@@ -91,6 +91,19 @@ Route::get('/api/catalog/{category}/{product}', function ($category, $product) {
     }
 });
 
+Route::get('/api/getproduct', function (Request $request) {
+    $id = $request->input('id');
+        $res = DB::select(
+            'select * from catalog where id = :id',
+            ['id' => $id]
+        );
+        if (isset($res)) {
+            return $res;
+        } else {
+            return '[]';
+        }
+});
+
 Route::post('/api/catalog/{category}/{product}/rate', function (Request $request) {
     $id = $request->input('id');
     $rate = $request->input('rate');
