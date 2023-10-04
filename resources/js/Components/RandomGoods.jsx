@@ -59,14 +59,14 @@ const RandomGoods = (props) => {
 
     return (
         <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
-            <Typography gutterBottom variant="h4" component="div" sx={{typography: {xs: 'h6', md: 'h5'}, mt: 1}} textAlign={'left'}>
+            <Typography gutterBottom variant="h4" component="div" sx={{ typography: { xs: 'h6', md: 'h5' }, mt: 1 }} textAlign={'left'}>
                 {props.title}
             </Typography>
             <Slider {...settings}>
                 {slider.map((el, i) => (
-                    <Card key={'product' + i} sx={{ maxWidth: '18rem', mx: 'auto' }}>
+                    <Card key={'product' + i} sx={{ maxWidth: '18rem', mx: 'auto', position: 'relative' }}>
                         <CardActionArea component="div">
-                            <Carousel items={ JSON.parse(el.images).map(item => {return {image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#'}}) } dots={true} arrows={false} loading="eager" />
+                            <Carousel items={JSON.parse(el.images).map(item => { return { image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#' } })} dots={true} arrows={false} loading="eager" />
                             <CardContent>
                                 <Typography component={RouterLink} to={'/catalog/' + el.category + '/' + el.path} gutterBottom variant="h6" color={'text.primary'}>
                                     {el.name}
@@ -86,6 +86,24 @@ const RandomGoods = (props) => {
                                 </p>
                             </CardContent>
                         </CardActionArea>
+                        <Box sx={{
+                            width: 'fit-content',
+                            height: 20,
+                            borderRadius: 4,
+                            px: 2,
+                            backgroundColor: el.badge === "new" ? "#1565c0" : el.badge === "top" ? "#c62828" : "#ffc107",
+                            color: 'white',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            position: 'absolute',
+                            top: 2,
+                            right: 2
+                        }}>
+                            <Typography variant="caption" display="block">
+                                {el.badge === "new" ? "Новинка" : el.badge === "top" ? "Хит" : el.badge}
+                            </Typography>
+                        </Box>
                     </Card>
                 ))}
             </Slider>
@@ -96,6 +114,6 @@ const RandomGoods = (props) => {
 RandomGoods.defaultProps = {
     type: 'random',
     title: ''
-  };
+};
 
 export default RandomGoods;

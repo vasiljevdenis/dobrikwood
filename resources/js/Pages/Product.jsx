@@ -55,20 +55,24 @@ const Product = observer(() => {
     }
 
     const changeRate = (newValue) => {
-        axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName + '/' + productName + '/rate',
-            {
-                id: product.id,
-                rate: newValue
-            })
-            .then(res => {
-                console.log(res);
-                notify('success', 'Спасибо за оценку!');
-            })
-            .catch(err => {
-                console.log(err);
-            })
-            .finally(() => {
-            });
+        if (localStorage.getItem('rate') && localStorage.getItem('rate') === 'true') {
+            notify('error', 'Вы уже голосовали!');
+        } else {
+            axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/catalog/' + categoryName + '/' + productName + '/rate',
+                {
+                    id: product.id,
+                    rate: newValue
+                })
+                .then(res => {
+                    localStorage.setItem('rate', 'true');
+                    notify('success', 'Спасибо за оценку!');
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally(() => {
+                });
+        }
     }
 
 
@@ -152,15 +156,30 @@ const Product = observer(() => {
                 <Grid container p={2}>
                     <Grid item xs={12}>
                         <Card sx={{ width: '100%', mx: 'auto' }}>
-                            <CardContent sx={{p: {xs: 0, sm: 2}}}>
+                            <CardContent sx={{ p: { xs: 0, sm: 2 } }}>
                                 <Grid container>
                                     <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: { xs: '100vw', md: '75vw' } }}>
-                                        <Carousel items={ JSON.parse(product.images).map(item => {return {image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#'}}) } dots={true} />
+                                        <Carousel items={JSON.parse(product.images).map(item => { return { image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#' } })} dots={true} />
                                     </Grid>
                                     <Grid item xs={12} md={6} p={1}>
-                                        <Typography gutterBottom variant="h4" component="h1">
+                                        <Typography gutterBottom variant="h4" sx={{ typography: { xs: 'h6', md: 'h4' } }} component="h1">
                                             {product.name}
                                         </Typography>
+                                        <Box sx={{
+                                            width: 'fit-content',
+                                            height: 20,
+                                            borderRadius: 4,
+                                            px: 2,
+                                            backgroundColor: product.badge === "new" ? "#1565c0" : product.badge === "top" ? "#c62828" : "#ffc107",
+                                            color: 'white',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                            <Typography variant="caption" display="block">
+                                                {product.badge === "new" ? "Новинка" : product.badge === "top" ? "Хит" : product.badge}
+                                            </Typography>
+                                        </Box>
                                         <Typography sx={{ color: 'rgba(0, 0, 0, 0.5)' }} variant="caption" display="block" gutterBottom>
                                             Код товара: <span>{product.id}</span>
                                         </Typography>

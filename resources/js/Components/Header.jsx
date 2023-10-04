@@ -13,7 +13,10 @@ const Header = () => {
 
   return (
     <Grid container alignItems={'center'} py={2} sx={{
-      background: `url(${texture})`,
+      background: {
+        xs: "#b49c83",
+        sm: `url(${texture})`
+      },
       backgroundSize: 'cover'
     }}>
       <Grid item xs={3} sm={2} textAlign={'center'}>
@@ -36,10 +39,11 @@ const Header = () => {
             <Typography variant="h3" component="h1" sx={{
               typography: {
                 xs: 'h6',
-                md: 'h3'
-              }
+                md: 'h4'
+              },
+              fontFamily: 'Evolventa !important'
             }} color="white" gutterBottom>
-              СЕМЕЙНАЯ МАСТЕРСКАЯ
+              МАСТЕРСКАЯ "ДОБРИК-WOOD"
             </Typography>
           </Grid>
           <Grid item xs={12} textAlign={'left'} sx={{ display: 'flex', alignItems: 'center' }}>

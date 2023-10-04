@@ -6,7 +6,7 @@ const formValidator = (order) => {
     if (!order.lastName) {
         isValid = false;
     }
-    if (!order.phone) {
+    if (!order.phone || order.phone.replace(/[^\d+]/g, "").length !== 12) {
         isValid = false;
     }
     if (!order.email || !order.email.includes('@') || !order.email.includes('.')) {
@@ -19,7 +19,7 @@ const formValidator = (order) => {
         if (!order.recipient.lastName) {
             isValid = false;
         }
-        if (!order.recipient.phone) {
+        if (!order.recipient.phone || order.recipient.phone.replace(/[^\d+]/g, "").length !== 12) {
             isValid = false;
         }
     }

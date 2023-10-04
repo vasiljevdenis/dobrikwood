@@ -7,7 +7,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { CssBaseline, Grid, ThemeProvider, createTheme } from '@mui/material';
 import Home from './Pages/Home';
 import About from './Pages/About';
-// import Feedback from './Pages/Feedback';
 import Error404 from './Pages/Error404';
 import Header from './Components/Header';
 import Footer from './Components/Footer';

@@ -116,7 +116,7 @@ const Cart = observer(() => {
                                                                 <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
                                                                     <CardContent sx={{ flex: '1 0 auto' }}>
                                                                         <Link href={'/catalog/' + el.category + '/' + el.path} underline="none" target="_blank">
-                                                                            <Typography component="div" variant="h5" color={'text.primary'}>
+                                                                            <Typography component="div" variant="h5" sx={{typography: {xs: 'h6', md: 'h5'}}} color={'text.primary'}>
                                                                                 {el.name}
                                                                             </Typography>
                                                                         </Link>
@@ -129,8 +129,11 @@ const Cart = observer(() => {
                                                         ) : (
                                                             <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
                                                                 <CardContent sx={{ flex: '1 0 auto' }}>
+                                                                    <Box sx={{textAlign: 'center'}}>
+                                                                    <img src={import.meta.env.VITE_APP_BASE_URL + '/' + JSON.parse(el.images)[0]} alt={el.name} style={{width: '100px'}} />
+                                                                    </Box>
                                                                     <Link href={'/catalog/' + el.category + '/' + el.path} underline="none" target="_blank">
-                                                                        <Typography component="div" variant="h5" color={'text.primary'}>
+                                                                        <Typography component="div" variant="h5" sx={{typography: {xs: 'h6', md: 'h5'}}} color={'text.primary'}>
                                                                             {el.name}
                                                                         </Typography>
                                                                     </Link>

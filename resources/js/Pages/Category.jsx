@@ -1,4 +1,4 @@
-import { Card, CardActionArea, CardContent, Divider, Grid, LinearProgress, Rating, Typography } from "@mui/material";
+import { Box, Card, CardActionArea, CardContent, Divider, Grid, LinearProgress, Rating, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import axios from "axios";
@@ -50,9 +50,9 @@ const Category = observer(() => {
                                 return (
                                     <Grid key={'product' + i} item xs={12} sm={6} md={4} lg={3} p={1} textAlign={'center'}>
                                         <RouterLink style={{ textDecoration: 'none' }} to={'/catalog/' + categoryName + '/' + el.path}>
-                                            <Card sx={{ maxWidth: '18rem', mx: 'auto', height: '100%' }}>
-                                                <CardActionArea component="div" sx={{height: '100%'}}>
-                                                    <Carousel items={ JSON.parse(el.images).map(item => {return {image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#'}}) } dots={true} arrows={false} />
+                                            <Card sx={{ maxWidth: '18rem', mx: 'auto', height: '100%', position: 'relative' }}>
+                                                <CardActionArea component="div" sx={{ height: '100%' }}>
+                                                    <Carousel items={JSON.parse(el.images).map(item => { return { image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#' } })} dots={true} arrows={false} />
                                                     <CardContent>
                                                         <Typography gutterBottom variant="h6" component="div">
                                                             {el.name}
@@ -72,6 +72,24 @@ const Category = observer(() => {
                                                         </p>
                                                     </CardContent>
                                                 </CardActionArea>
+                                                <Box sx={{
+                                                    width: 'fit-content',
+                                                    height: 20,
+                                                    borderRadius: 4,
+                                                    px: 2,
+                                                    backgroundColor: el.badge === "new" ? "#1565c0" : el.badge === "top" ? "#c62828" : "#ffc107",
+                                                    color: 'white',
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    position: 'absolute',
+                                                    top: 2,
+                                                    right: 2
+                                                }}>
+                                                    <Typography variant="caption" display="block">
+                                                        {el.badge === "new" ? "Новинка" : el.badge === "top" ? "Хит" : el.badge}
+                                                    </Typography>
+                                                </Box>
                                             </Card>
                                         </RouterLink>
                                     </Grid>

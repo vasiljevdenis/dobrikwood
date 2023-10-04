@@ -221,7 +221,27 @@ const Checkout = observer(() => {
                         setOrder({ ...order, delivery_sum: Math.ceil(result.total_sum * 1.1), delivery_days: result.period_min === result.period_max ? [result.period_min] : [result.period_min, result.period_max] });
                         window.scrollTo(0, document.body.scrollHeight);
                     } else {
-                        notify('error', result.message);
+                        axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
+                            tariff_code: code,
+                            from_location: 'Чебоксары, ул. Гражданская, 105',
+                            to_location: order.city,
+                            packages: packages
+                        })
+                            .then(res => {
+                                let result = res.data;
+                                if (result.status) {
+                                    setOrder({ ...order, delivery_sum: Math.ceil(result.total_sum * 1.1), delivery_days: result.period_min === result.period_max ? [result.period_min] : [result.period_min, result.period_max] });
+                                    window.scrollTo(0, document.body.scrollHeight);
+                                } else {
+                                    notify('error', "Ошибка! Проверьте адрес доставки");
+                                }
+                                setloadShipping(false);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                            .finally(() => {
+                            });
                     }
                     setloadShipping(false);
                 })
