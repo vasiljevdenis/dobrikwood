@@ -60,15 +60,25 @@ const Category = observer(() => {
                                                         <Divider />
                                                         <Rating name="read-only" value={el.rate} readOnly />
                                                         <p style={{ textAlign: 'right' }}>
-                                                            <Typography variant="subtitle2" component="span" gutterBottom sx={{
-                                                                color: 'rgba(0, 0, 0, 0.5)',
-                                                                p: 1
-                                                            }}><del>{el.lastPrice === 0 ? '' : el.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
-                                                            <Typography variant="h6" component="span" gutterBottom sx={{
-                                                                color: 'white',
-                                                                background: '#60a47c',
-                                                                p: 1
-                                                            }}>{el.price === 0 ? '' : el.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
+                                                            {el.published === "true" ? (
+                                                                <>
+                                                                    <Typography variant="subtitle2" component="span" gutterBottom sx={{
+                                                                        color: 'rgba(0, 0, 0, 0.5)',
+                                                                        p: 1
+                                                                    }}><del>{el.lastPrice === 0 ? '' : el.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
+                                                                    <Typography variant="h6" component="span" gutterBottom sx={{
+                                                                        color: 'white',
+                                                                        background: '#60a47c',
+                                                                        p: 1
+                                                                    }}>{el.price === 0 ? '' : el.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
+                                                                </>
+                                                            ) : (
+                                                                <Typography variant="h6" component="span" gutterBottom sx={{
+                                                                    color: 'white',
+                                                                    background: '#60a47c',
+                                                                    p: 1
+                                                                }}>Нет в продаже</Typography>
+                                                            )}
                                                         </p>
                                                     </CardContent>
                                                 </CardActionArea>

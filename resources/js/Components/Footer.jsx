@@ -156,7 +156,7 @@ const Footer = observer(() => {
             </Link>
           </ListItem>
           <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
+            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/about" underline="none">
               <ListItemText
                 primary="О нас"
                 sx={{
@@ -168,7 +168,7 @@ const Footer = observer(() => {
             </Link>
           </ListItem>
           <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
+            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/delivery" underline="none">
               <ListItemText
                 primary="Доставка и оплата"
                 sx={{
@@ -180,7 +180,7 @@ const Footer = observer(() => {
             </Link>
           </ListItem>
           <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
+            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/contact" underline="none">
               <ListItemText
                 primary="Контакты"
                 sx={{
@@ -192,7 +192,7 @@ const Footer = observer(() => {
             </Link>
           </ListItem>
           <ListItem sx={listItemStyle}>
-            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/" underline="none">
+            <Link sx={{ color: '#212529', textTransform: 'uppercase' }} component={RouterLink} to="/reviews" underline="none">
               <ListItemText
                 primary="Отзывы"
                 sx={{

@@ -8,7 +8,7 @@
             ->select('meta_title', 'meta_description', 'meta_keywords')
             ->where('path', '=', explode("/", $path)[1])
             ->get();
-            $title = $data[0]->meta_title;
+            $title = $data[0]->meta_title . '. Купить в Добрик-Wood';
             $description = $data[0]->meta_description;    
             $keywords = $data[0]->meta_keywords;    
     } elseif ($path !== '/' && count(explode("/", $path)) === 3) {
@@ -17,7 +17,7 @@
             ->where('category', '=', explode("/", $path)[1])
             ->where('path', '=', explode("/", $path)[2])
             ->get();
-            $title = $data[0]->meta_title;
+            $title = $data[0]->meta_title . '. Купить в Добрик-Wood';
             $description = $data[0]->meta_description;
             $keywords = $data[0]->meta_keywords;  
     } else {
@@ -44,10 +44,10 @@
     <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
     <meta property="og:title" content="{{ $title }}">
     <meta property="og:description" content="{{ $description }}">
-    <meta property="og:image" content="https://quickres.ru/assets/img/preview.png">
+    <meta property="og:image" content="https://dobrik-wood.ru/storage/images/preview.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <title>{{ $title . ' Купить в Добрик-Wood' }}</title>
+    <title>{{ $title }}</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ env('APP_URL', '') . '/storage/images/favicon.svg' }}" type="image/x-icon">

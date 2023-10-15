@@ -159,7 +159,7 @@ const Product = observer(() => {
                             <CardContent sx={{ p: { xs: 0, sm: 2 } }}>
                                 <Grid container>
                                     <Grid item xs={12} md={6} p={1} textAlign={'center'} sx={{ width: { xs: '100vw', md: '75vw' } }}>
-                                        <Carousel items={JSON.parse(product.images).map(item => { return { image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#' } })} dots={true} />
+                                        <Carousel items={JSON.parse(product.images).map(item => { return { image: import.meta.env.VITE_APP_BASE_URL + '/' + item, link: '#' } })} dots={true} zoom={true} />
                                     </Grid>
                                     <Grid item xs={12} md={6} p={1}>
                                         <Typography gutterBottom variant="h4" sx={{ typography: { xs: 'h6', md: 'h4' } }} component="h1">
@@ -184,20 +184,34 @@ const Product = observer(() => {
                                             Код товара: <span>{product.id}</span>
                                         </Typography>
                                         <p>
-                                            <Typography variant="h5" component="span" gutterBottom sx={{
-                                                color: 'white',
-                                                background: '#60a47c',
-                                                p: 1
-                                            }}>{product.price === 0 ? '' : product.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
-                                            <Typography variant="subtitle1" component="span" gutterBottom sx={{
-                                                color: 'rgba(0, 0, 0, 0.5)',
-                                                p: 1,
-                                                my: 1
-                                            }}><del>{product.lastPrice === 0 ? '' : product.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
+                                            {product.published === "true" ? (
+                                                <>
+                                                    <Typography variant="h5" component="span" gutterBottom sx={{
+                                                        color: 'white',
+                                                        background: '#60a47c',
+                                                        p: 1
+                                                    }}>{product.price === 0 ? '' : product.price.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</Typography>
+                                                    <Typography variant="subtitle1" component="span" gutterBottom sx={{
+                                                        color: 'rgba(0, 0, 0, 0.5)',
+                                                        p: 1,
+                                                        my: 1
+                                                    }}><del>{product.lastPrice === 0 ? '' : product.lastPrice.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}</del></Typography>
+                                                </>
+                                            ) : (
+                                                <Typography variant="h5" component="span" gutterBottom sx={{
+                                                    color: 'white',
+                                                    background: '#60a47c',
+                                                    p: 1
+                                                }}>Нет в продаже</Typography>
+                                            )}
                                         </p>
-                                        <Button sx={{ color: 'white', my: 1, display: count > 0 ? 'none' : 'inline-flex' }} variant="contained" startIcon={<AddShoppingCartIcon />} onClick={() => addToCart(product.id)}>
-                                            В корзину
-                                        </Button>
+                                        {product.published === "true" ? (
+                                            <Button sx={{ color: 'white', my: 1, display: count > 0 ? 'none' : 'inline-flex' }} variant="contained" startIcon={<AddShoppingCartIcon />} onClick={() => addToCart(product.id)}>
+                                                В корзину
+                                            </Button>
+                                        ) : (
+                                            <></>
+                                        )}
                                         <Box display={count > 0 ? 'block' : 'none'}>
                                             <IconButton color="primary" aria-label="Minus button" onClick={() => decreaseQuantity(product.id)}>
                                                 <RemoveCircleIcon />

@@ -136,11 +136,49 @@ Route::post('/api/catalog/new', function (Request $request) {
         }
 
         $catalogData['images'] = json_encode($images_arr);
+        $catalogData['published'] = $request->input('published') ? 'true' : 'false';
         $catalogData['rate_history'] = '[5]';
-        $catalogData['meta_title'] = '';
-        $catalogData['meta_description'] = '';
-        $catalogData['meta_keywords'] = '';
         $catalogId = DB::table('catalog')->insertGetId($catalogData);
+        if ($catalogId) {
+            return $catalogId;
+        }
+});
+Route::post('/api/catalog/update', function (Request $request) {
+        $catalogData = [];
+        foreach ($request->except(['_token', 'images', 'deletedImages', 'newImages']) as $key => $value) {
+            $catalogData[$key] = $value;
+        }
+        
+        $images_arr = [];
+
+        if ($request->has('deletedImages')) {
+            foreach ($request->input('deletedImages') as $key => $value) {
+                $res = Storage::delete(str_replace("storage", "public", $value));
+            }
+            $n = 1;
+            foreach ($request->input('images') as $key => $value) {
+                $newName = 'public/images/' . $request->input('category') . "/" . $request->input('path') . $n . '.' . explode(".", $value)[1];
+                $rename = Storage::move(str_replace("storage", "public", $value), $newName);
+                array_push($images_arr, str_replace("public", "storage", $newName));
+                $n++;
+            }
+        }
+
+        if ($request->hasFile('newImages')) {
+            $num = count($request->input('images')) + 1;
+            foreach ($request->file('newImages') as $image) {
+                $extension = $image->getClientOriginalExtension();
+                $filename = $request->input('path') . $num . '.' . $extension;
+                $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
+                array_push($images_arr, str_replace("public", "storage", $path));
+                $num++;
+            }
+        }
+
+        $catalogData['images'] = json_encode($images_arr);
+        $catalogData['published'] = $request->input('published') ? 'true' : 'false';
+        $catalogData['rate_history'] = '[5]';
+        $catalogId = DB::table('catalog')->where('path', $catalogData['path'])->update($catalogData);
         if ($catalogId) {
             return $catalogId;
         }

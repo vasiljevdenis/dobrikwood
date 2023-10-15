@@ -28,6 +28,7 @@ import Delivery from './Pages/Delivery';
 import Contact from './Pages/Contact';
 import Reviews from './Pages/Reviews';
 import CustomOrder from './Components/CustomOrder';
+import ToTopBtn from './Components/ToTopBtn';
 
 const newTheme = createTheme({
   palette: {
@@ -104,6 +105,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
       <Notification />
       <Feedback />
       <CustomOrder />
+      <ToTopBtn />
     </ThemeProvider>
   </BrowserRouter>
 );

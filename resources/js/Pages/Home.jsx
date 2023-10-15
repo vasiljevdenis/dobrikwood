@@ -1,4 +1,4 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import * as React from "react";
 import Carousel from "../Components/Carousel";
 import slide1 from '../../images/001.png';
@@ -35,9 +35,38 @@ const Home = () => {
 
     return (
         <>
-            <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
+            <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center', background: '#b49c83' }}>
                 <Carousel items={items} arrows={false} autoplay={true} loading="eager" />
             </Box>
+            <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center', background: '#b49c83' }}>
+                <Typography variant="h3" component="p" sx={{
+                    typography: {
+                        xs: 'h6',
+                        md: 'h5'
+                    },
+                    fontFamily: 'Evolventa !important',
+                    pt: 1,
+                    pb: 1.5
+                }} color="white" gutterBottom>
+                    Добро пожаловать на сайт мастерской "Добрик-Wood!"
+                </Typography>
+            </Box>
+            <Box p={0} m={0} sx={{ width: '100%', textAlign: 'center' }}>
+                <Typography variant="h3" component="p" sx={{
+                    typography: {
+                        xs: 'body1',
+                        md: 'h6'
+                    },
+                    fontFamily: 'Evolventa !important',
+                    py: 1.5
+                }} gutterBottom>
+                    Стильные и качественные решения для детской и не только...
+                </Typography>
+            </Box>
+            <Divider variant="middle" light={false} sx={{
+                width: '36%',
+                mx: '32%'
+            }} />
             <Grid container p={2}>
                 <Grid item xs={12}>
                     <RandomGoods title="Новинки" type="new" />
