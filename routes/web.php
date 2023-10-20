@@ -93,15 +93,15 @@ Route::get('/api/catalog/{category}/{product}', function ($category, $product) {
 
 Route::get('/api/getproduct', function (Request $request) {
     $id = $request->input('id');
-        $res = DB::select(
-            'select * from catalog where id = :id',
-            ['id' => $id]
-        );
-        if (isset($res)) {
-            return $res;
-        } else {
-            return '[]';
-        }
+    $res = DB::select(
+        'select * from catalog where id = :id',
+        ['id' => $id]
+    );
+    if (isset($res)) {
+        return $res;
+    } else {
+        return '[]';
+    }
 });
 
 Route::post('/api/catalog/{category}/{product}/rate', function (Request $request) {
@@ -117,44 +117,44 @@ Route::post('/api/catalog/{category}/{product}/rate', function (Request $request
 });
 
 Route::post('/api/catalog/new', function (Request $request) {
-        $catalogData = [];
-        foreach ($request->except(['_token', 'images']) as $key => $value) {
-            $catalogData[$key] = $value;
-        }
+    $catalogData = [];
+    foreach ($request->except(['_token', 'images']) as $key => $value) {
+        $catalogData[$key] = $value;
+    }
 
-        $images_arr = [];
+    $images_arr = [];
 
-        if ($request->hasFile('images')) {
-            $num = 1;
-            foreach ($request->file('images') as $image) {
-                $extension = $image->getClientOriginalExtension();
-                $filename = $request->input('path') . $num . '.' . $extension;
-                $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
-                array_push($images_arr, str_replace("public", "storage", $path));
-                $num++;
-            }
+    if ($request->hasFile('images')) {
+        $num = 1;
+        foreach ($request->file('images') as $image) {
+            $extension = $image->getClientOriginalExtension();
+            $filename = $request->input('path') . $num . '.' . $extension;
+            $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
+            array_push($images_arr, str_replace("public", "storage", $path));
+            $num++;
         }
+    }
 
-        $catalogData['images'] = json_encode($images_arr);
-        $catalogData['published'] = $request->input('published') ? 'true' : 'false';
-        $catalogData['rate_history'] = '[5]';
-        $catalogId = DB::table('catalog')->insertGetId($catalogData);
-        if ($catalogId) {
-            return $catalogId;
-        }
+    $catalogData['images'] = json_encode($images_arr);
+    $catalogData['rate_history'] = '[5]';
+    $catalogId = DB::table('catalog')->insertGetId($catalogData);
+    if ($catalogId) {
+        return $catalogId;
+    }
 });
 Route::post('/api/catalog/update', function (Request $request) {
-        $catalogData = [];
-        foreach ($request->except(['_token', 'images', 'deletedImages', 'newImages']) as $key => $value) {
-            $catalogData[$key] = $value;
-        }
-        
-        $images_arr = [];
+    $catalogData = [];
+    foreach ($request->except(['_token', 'images', 'deletedImages', 'newImages']) as $key => $value) {
+        $catalogData[$key] = $value;
+    }
 
-        if ($request->has('deletedImages')) {
-            foreach ($request->input('deletedImages') as $key => $value) {
-                $res = Storage::delete(str_replace("storage", "public", $value));
-            }
+    $images_arr = [];
+
+    if ($request->has('deletedImages')) {
+        foreach ($request->input('deletedImages') as $key => $value) {
+            $res = Storage::delete(str_replace("storage", "public", $value));
+        }
+        if ($request->has('images')) {
             $n = 1;
             foreach ($request->input('images') as $key => $value) {
                 $newName = 'public/images/' . $request->input('category') . "/" . $request->input('path') . $n . '.' . explode(".", $value)[1];
@@ -163,25 +163,27 @@ Route::post('/api/catalog/update', function (Request $request) {
                 $n++;
             }
         }
+    } else {
+        $images_arr = $request->input('images');
+    }
 
-        if ($request->hasFile('newImages')) {
-            $num = count($request->input('images')) + 1;
-            foreach ($request->file('newImages') as $image) {
-                $extension = $image->getClientOriginalExtension();
-                $filename = $request->input('path') . $num . '.' . $extension;
-                $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
-                array_push($images_arr, str_replace("public", "storage", $path));
-                $num++;
-            }
+    if ($request->hasFile('newImages')) {
+        $num = is_array($request->input('images')) ? count($request->input('images')) + 1 : 1;
+        foreach ($request->file('newImages') as $image) {
+            $extension = $image->getClientOriginalExtension();
+            $filename = $request->input('path') . $num . '.' . $extension;
+            $path = Storage::putFileAs('public/images/' . $request->input('category'), $image, $filename);
+            array_push($images_arr, str_replace("public", "storage", $path));
+            $num++;
         }
+    }
 
-        $catalogData['images'] = json_encode($images_arr);
-        $catalogData['published'] = $request->input('published') ? 'true' : 'false';
-        $catalogData['rate_history'] = '[5]';
-        $catalogId = DB::table('catalog')->where('path', $catalogData['path'])->update($catalogData);
-        if ($catalogId) {
-            return $catalogId;
-        }
+    $catalogData['images'] = json_encode($images_arr);
+    $catalogData['rate_history'] = '[5]';
+    $catalogId = DB::table('catalog')->where('path', $catalogData['path'])->update($catalogData);
+    if ($catalogId) {
+        return $catalogId;
+    }
 });
 Route::post('/api/catalog/delete', function (Request $request) {
     $goods = $request->input('ids');
@@ -190,7 +192,7 @@ Route::post('/api/catalog/delete', function (Request $request) {
         ->whereIn('id', $goods)
         ->get();
     if (isset($res)) {
-        foreach($res as $key => $value) {
+        foreach ($res as $key => $value) {
             foreach (json_decode($value->images) as $k => $v) {
                 $p = Storage::delete(str_replace('storage', 'public', $v));
             }
