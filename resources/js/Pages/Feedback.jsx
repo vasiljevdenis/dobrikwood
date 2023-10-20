@@ -25,7 +25,6 @@ const Feedback = () => {
   useEffect(() => {
     axios.get(`/api/page/feedback`)
       .then(res => {
-        console.log(res);
         let json = res.data[0];
         setState((oldState) => ({ ...oldState, title: json.title, text: json.text, image: json.image }));
       })
@@ -110,7 +109,6 @@ const Feedback = () => {
         text: text
       })
         .then(res => {
-          console.log(res);
           setSnackbar({ ...snackbar, open: true, text: 'Успешно отправлено!', status: "success" });
           setName('');
           setPhone('');

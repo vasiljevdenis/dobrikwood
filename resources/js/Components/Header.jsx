@@ -12,12 +12,16 @@ import MobileMenu from './MobileMenu';
 const Header = () => {
 
   return (
-    <Grid container alignItems={'center'} py={2} sx={{
+    <Grid container alignItems={'center'} sx={{
       background: {
         xs: "#b49c83",
         sm: `url(${texture})`
       },
-      backgroundSize: 'cover'
+      backgroundSize: 'cover',
+      p: {
+        xs: '16px 0 0',
+        sm: '16px 0'
+      }
     }}>
       <Grid item xs={3} sm={2} textAlign={'center'}>
         <Link component={RouterLink} to="/" sx={{
@@ -35,7 +39,7 @@ const Header = () => {
       </Grid>
       <Grid item xs={7} textAlign={'left'} sx={{ pl: '0' }}>
         <Grid container>
-          <Grid item xs={12} sx={{ display: { xs: 'none', sm: 'block' } }} textAlign={'left'}>
+          <Grid item xs={12} sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
             <Typography variant="h3" component="h1" sx={{
               typography: {
                 xs: 'h6',
@@ -43,17 +47,19 @@ const Header = () => {
               },
               fontFamily: 'Evolventa !important'
             }} color="white" gutterBottom>
-              МАСТЕРСКАЯ "ДОБРИК-WOOD"
+              МАСТЕРСКАЯ "<span style={{ letterSpacing: 2.3 }}>ДОБРИК-WOOD</span>"
             </Typography>
           </Grid>
-          <Grid item xs={12} textAlign={'left'} sx={{ display: 'flex', alignItems: 'center' }}>
-            <Search />
+          <Grid item xs={12} textAlign={'left'} sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center' }}>
+            {window.innerWidth > 600 && (
+              <Search />
+            )}
             <Link variant='h6' underline="none" href="tel:+79196628330" sx={{
               display: 'inline-block',
               verticalAlign: 'middle',
               color: 'white',
               background: '#60a47c',
-              ml: {xs: 'auto', md: '54px'},
+              ml: { xs: 'auto', md: '54px' },
               padding: 1,
               borderRadius: '4px',
               transition: 'all 1.2s cubic-bezier(.4, 0, 0, 1)',
@@ -95,6 +101,16 @@ const Header = () => {
       </Grid>
       <Grid item xs={2} sm={3} sx={{ display: { xs: 'block', sm: 'none' } }} textAlign={'center'} alignSelf={'center'}>
         <MobileMenu />
+      </Grid>
+      <Grid item xs={12} py={1} pr={'1rem'} justifyContent={'center'} alignItems={'center'} sx={{ display: { xs: 'flex', sm: 'none' }, backgroundColor: 'white' }} textAlign={'center'}>
+        {!(window.innerWidth > 600) && (
+          <>
+            <IconButton aria-label="phone" onClick={() => location.href = "tel:+79196628330"} size="large">
+              <LocalPhoneIcon color='primary' />
+            </IconButton>
+            <Search />
+          </>
+        )}
       </Grid>
     </Grid>
   );

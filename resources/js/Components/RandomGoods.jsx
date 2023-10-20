@@ -51,7 +51,6 @@ const RandomGoods = (props) => {
                 let json = res.data;
                 if (window.innerWidth <= 600) {
                     json = json.slice(0, 4);
-                    console.log(json);
                 }
                 setSlider(json);
             })

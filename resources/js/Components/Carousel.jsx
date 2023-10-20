@@ -32,7 +32,8 @@ const Carousel = (props) => {
     speed: 500,
     autoplay: props.autoplay,
     autoplaySpeed: 5000,
-    adaptiveHeight: true
+    adaptiveHeight: true,
+    className: "innerSlider"
   };
 
   const [slider, setSlider] = useState(props.items);

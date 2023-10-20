@@ -73,7 +73,7 @@ export default function Search() {
   return (
     <Autocomplete
       id="search-catalog"
-      sx={{ width: 300, '& .MuiAutocomplete-popupIndicator': { transform: 'none' }, display: { xs: 'none', sm: 'block' } }}
+      sx={{ width: 300, '& .MuiAutocomplete-popupIndicator': { transform: 'none' } }}
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.name
       }
@@ -93,13 +93,16 @@ export default function Search() {
         setInputValue(newInputValue);
       }}      
       renderInput={(params) => (
-        <FormControl sx={{ mr: 1, maxWidth: {xs: '250px', md: '350px'}, width: '100%' }} variant="outlined">
+        <FormControl sx={{ mr: 1, maxWidth: {xs: '100%', md: '350px'}, width: '100%' }} variant="outlined">
           <TextField
             {...params}
             id="search-box"
             sx={{
               background: 'white',
-              width: '60%',
+              width: {
+                xs: '100%',
+                sm: '60%'
+              },
               height: 48,
               borderRadius: '4px',
               transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',

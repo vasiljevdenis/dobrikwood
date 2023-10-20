@@ -140,3 +140,13 @@ ymaps[class*="-balloon"] {
 img:focus-visible {
   outline: none !important;
 }
+
+
+
+.innerSlider .slick-track {
+  display: flex;
+}
+.innerSlider .slick-track .slick-slide {
+  display: flex;
+  height: auto;
+}

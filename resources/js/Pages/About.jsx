@@ -16,7 +16,6 @@ const About = () => {
   React.useEffect(() => {
     axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/page/about')
       .then(res => {
-        console.log(res);
         let json = res.data[0];
         setState((oldState) => ({ ...oldState, title: json.title, text: json.text, image: json.image }));
       })
