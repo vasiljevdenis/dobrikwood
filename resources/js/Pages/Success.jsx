@@ -1,6 +1,6 @@
 import * as React from "react";
 import { observer } from "mobx-react-lite";
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import appState from "../store/appState";
 import { Box, Button, Divider, Grid, Typography } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -9,20 +9,25 @@ import RandomGoods from "../Components/RandomGoods";
 const Success = observer(() => {
 
     const [store] = React.useState(appState);
+    const loc = useLocation();
 
-    localStorage.setItem('cart', JSON.stringify({
-        updated_at: new Date(),
-        cartTotal: 0,
-        goods: {}
-    }));
-    store.changeCartTotal(0);
-    store.changeOrderId(0);
+    React.useEffect(() => {
+        if (loc.state.prevPath === "/checkout" || loc.state.prevPath === "/payment") {
+            localStorage.setItem('cart', JSON.stringify({
+                updated_at: new Date(),
+                cartTotal: 0,
+                goods: {}
+            }));
+            store.changeCartTotal(0);
+            store.changeOrderId(0);
+        }
+    }, []);
 
     return (
         <>
             <Box sx={{ py: 3, textAlign: 'center' }}>
-                <Typography variant="h2" component="h2" sx={{typography: {xs: 'h5', md: 'h2'}}} m={2} textAlign={'center'}>
-                    <CheckCircleIcon color="primary" fontSize="large" className="rotate" /> Заказ успешно оплачен!
+                <Typography variant="h2" component="h2" sx={{ typography: { xs: 'h5', md: 'h2' } }} m={2} textAlign={'center'}>
+                    <CheckCircleIcon color="primary" fontSize="large" className="rotate" /> Заказ успешно {loc.state.prevPath === "/checkout" ? "оформлен" : "оплачен"}!
                 </Typography>
                 <Divider />
                 <Button component={RouterLink} to="/catalog" variant="contained" sx={{

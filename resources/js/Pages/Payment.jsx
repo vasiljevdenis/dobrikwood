@@ -43,7 +43,7 @@ const Payment = observer(() => {
               .then(res => {
                 let result = res.data;
                 checkout.destroy();
-                navigate('/success');
+                navigate('/success', {state: {prevPath: location.pathname}});
               })
               .catch(err => {
               })

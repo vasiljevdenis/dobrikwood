@@ -214,6 +214,67 @@ Route::post('/api/cart/goods', function (Request $request) {
     }
 });
 
+Route::post('/api/page/text', function (Request $request) {
+    $page = $request->input('page');
+    $text = $request->input('text');
+    $json = DB::update('update pages set text = :text where page = :page', ['text' => $text, 'page' => $page]);
+    return $json;
+});
+Route::post('/api/page/title', function (Request $request) {
+    $page = $request->input('page');
+    $title = $request->input('title');
+    $json = DB::update('update pages set title = :title where page = :page', ['title' => $title, 'page' => $page]);
+    return $json;
+});
+Route::post('/api/page/image', function (Request $request) {
+    // Storage::makeDirectory('/public/images/');
+    $path = $request->image->storeAs('/public/images/', $request->input('page') . '.' . $request->image->extension());
+    $page = $request->input('page');
+    $image = '/storage/images/' . $request->input('page') . '.' . $request->image->extension();
+    $json = DB::update('update pages set image = :image where page = :page', ['image' => $image, 'page' => $page]);
+    return $json;
+});
+Route::get('/api/page/{page}', function ($page) {
+    $json = DB::select('select * from pages where page = :page', ['page' => $page]);
+    return $json;
+});
+
+Route::get('/api/slider', function () {
+    $json = DB::select('select * from slider');
+    return $json;
+});
+
+Route::post('/api/slider/update', function (Request $request) {
+    $slider = json_decode($request->input('slider'), true);
+    foreach ($slider as $el) {
+        $priority = $el['priority'];
+        $id = $el['id'];
+        $json = DB::update('update slider set priority = :priority where id = :id', ['priority' => $priority, 'id' => $id]);
+    }
+});
+
+Route::post('/api/slider/delete', function (Request $request) {
+    $id = $request->input('id');
+    $json = DB::delete('delete from slider where id = :id', ['id' => $id]);
+    return $json;
+});
+
+Route::post('/api/slider/new', function (Request $request) {
+    $image = '';
+    $uniqid = uniqid();
+    if ($request->hasFile('image')) {
+        $path = $request->image->storeAs('/public/images/', $uniqid . '.' . $request->image->extension());
+        $image = '/storage/images/' . $uniqid . '.' . $request->image->extension();
+    } else {
+        $image = $request->input('image');
+    }
+    $target = $request->input('target');
+    $priority = $request->input('priority');
+    $link = $request->input('link');
+    $json = DB::insert('insert into slider (image, link, priority, target) values (?, ?, ?, ?)', [$image, $link, $priority, $target]);
+    return $json;
+});
+
 Route::post('/api/calculator', [CdekController::class, 'calcShipping']);
 // Route::get('/api/cdek/neworder', [CdekController::class, 'createOrder']);
 

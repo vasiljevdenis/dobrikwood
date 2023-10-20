@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, Divider, FormControl, FormControlLabel, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Button, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
 import * as React from "react";
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from "axios";
@@ -6,6 +6,7 @@ import TextareaAutosize from "react-autosize-textarea";
 import { observer } from "mobx-react-lite";
 import appState from "../store/appState";
 import PaymentIcon from '@mui/icons-material/Payment';
+import CheckIcon from '@mui/icons-material/Check';
 import { YMaps, withYMaps } from "@pbe/react-yandex-maps";
 import getDaysDelivery from "../helpers/getDaysDelivery";
 import streetVariations from "../helpers/streetVariations";
@@ -56,7 +57,7 @@ const MapSuggestComponent = observer((props) => {
         id="suggest"
         variant="outlined"
         value={store.addressVal.city}
-        onChange={(event) => store.changeAddress({...store.addressVal, city: event.target.value})}
+        onChange={(event) => store.changeAddress({ ...store.addressVal, city: event.target.value })}
         required
         sx={{
             width: '100%',
@@ -112,6 +113,7 @@ const Checkout = observer(() => {
             code: 136
         }
     });
+    const [paymentAfter, setPaymentAfter] = React.useState(false);
 
     const changeType = (val) => {
         setOrder({ ...order, type: val });
@@ -175,6 +177,9 @@ const Checkout = observer(() => {
         setOrder({ ...order, recipient: { ...order.recipient, lastName: val.slice(0, 1).toUpperCase() + val.slice(1) } });
     }
 
+    const changeAfterPayment = () => {
+        setPaymentAfter(!paymentAfter);
+    }
     const changeRecipientPhone = (val) => {
         setOrder({ ...order, recipient: { ...order.recipient, phone: val } });
     }
@@ -329,8 +334,29 @@ const Checkout = observer(() => {
                 .then(res => {
                     let result = res.data;
                     if (result.status) {
-                        store.changeOrderId(result.order_id);
-                        navigate('/payment');
+                        if (paymentAfter) {
+                            axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/notification?id=' + store.orderIdVal)
+                                .then(res => {
+                                    axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/mail?id=' + store.orderIdVal)
+                                        .then(res => {
+                                            let result = res.data;
+                                            navigate('/success', { state: { prevPath: location.pathname } });
+                                        })
+                                        .catch(err => {
+                                        })
+
+                                        .finally(() => {
+                                        });
+                                })
+                                .catch(err => {
+                                })
+
+                                .finally(() => {
+                                });
+                        } else {
+                            store.changeOrderId(result.order_id);
+                            navigate('/payment');
+                        }
                     } else {
                         notify('error', result.message);
                     }
@@ -514,10 +540,10 @@ const Checkout = observer(() => {
                                 <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                                     <YMaps
                                         enterprise
-                                        query={{ 
+                                        query={{
                                             apikey: import.meta.env.VITE_APP_YMAPS_API_KEY,
                                             suggest_apikey: import.meta.env.VITE_APP_YMAPS_SUGGEST_API_KEY
-                                         }}
+                                        }}
                                     >
                                         <SuggestComponent />
                                     </YMaps>
@@ -696,8 +722,11 @@ const Checkout = observer(() => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={9} p={1} textAlign={'center'}>
-                    <Button disabled={order.delivery && order.delivery_sum === 0 ? true : false} variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
-                        Перейти к оплате
+                    <FormGroup>
+                        <FormControlLabel control={<Checkbox checked={paymentAfter ? true : false} onClick={changeAfterPayment} />} label="Оплатить после получения заказа" />
+                    </FormGroup>
+                    <Button disabled={order.delivery && order.delivery_sum === 0 ? true : false} variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={paymentAfter ? <CheckIcon /> : <PaymentIcon />}>
+                        {paymentAfter ? "Оформить заказ" : "Перейти к оплате"}
                     </Button>
                 </Grid>
             </Grid>

@@ -1,12 +1,35 @@
 import { Box, Typography } from "@mui/material";
 import * as React from "react";
 import aboutus from '../../images/aboutus.jpg';
+import axios from "axios";
 
 const About = () => {
+
+  const [state, setState] = React.useState({
+    id: 1,
+    image: "",
+    page: "about",
+    text: "",
+    title: ""
+  });
+
+  React.useEffect(() => {
+    axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/page/about')
+      .then(res => {
+        console.log(res);
+        let json = res.data[0];
+        setState((oldState) => ({ ...oldState, title: json.title, text: json.text, image: json.image }));
+      })
+      .catch(err => {
+      })
+      .finally(() => {
+      });
+  }, []);
+
   return (
     <>
       <Typography variant="h4" component="h2" m={2}>
-        О нас
+        {state.title}
       </Typography>
       <Box sx={{
         maxWidth: '500px',
@@ -15,10 +38,13 @@ const About = () => {
         my: 1,
         mx: {xs: 0, md: 1}
       }}>
-        <img src={aboutus} alt="О нас" style={{
+        <img src={state.image} alt={state.title} style={{
           width: '100%'
         }} />
       </Box>
+      <Typography variant="body1" component="p" mx={2} gutterBottom>
+      {state.text}
+      </Typography>
       <Typography variant="body1" component="p" mx={2} gutterBottom>
         В городе на Волге - Чебоксарах есть <b>семейная мастерская "Добрик-wood"</b>, где делают <b>изделия из дерева с любовью.</b>
       </Typography>

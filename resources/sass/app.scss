@@ -136,3 +136,7 @@ ymaps[class*="-balloon"] {
   outline: none;
   z-index: 100;
 }
+
+img:focus-visible {
+  outline: none !important;
+}
