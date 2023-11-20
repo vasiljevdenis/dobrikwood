@@ -29,7 +29,7 @@ const Payment = observer(() => {
             control_primary: '#60a47c',
             control_primary_content: '#ffffff'
           },
-          // payment_methods: ['bank_card', 'yoo_money', 'sberbank', 'sbp']
+          // payment_methods: ['bank_card', 'yoo_money', 'sberbank', 'sbp', 'tinkoff_bank']
         },
         error_callback: function (error) {
           notify('error', error);

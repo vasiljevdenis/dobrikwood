@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CdekController;
+use App\Http\Controllers\CdekService;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -311,6 +312,10 @@ Route::get('/api/order/mail', function (Request $request) {
         ->get()[0];
     $mc = new MailController();
     return $mc->index($db);
+});
+Route::get('/api/cdek/service', function (Request $request) {
+    $service = new CdekService(env('CDEK_CLIENT_ID', ''), env('CDEK_CLIENT_SECRET', ''));
+    $service->process($request, $request->all());
 });
 
 Auth::routes();

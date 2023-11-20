@@ -205,15 +205,17 @@ const Checkout = observer(() => {
                 code = 234;
             } else if (totalWeight > 30000 && totalWeight <= 50000 && order.courier) {
                 code = 233;
-            }
+            }            
             const packages = Object.values(cartState.goods).map(item => {
-                return {
+                const obj = {
                     weight: item.weight * 1000,
                     length: item.length,
                     width: item.width,
                     height: item.height
-                }
-            });
+                };
+                const arr = Array.from({length: item.count}, () => Object.assign({}, obj));
+                return arr;
+            }).flat();
             axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
                 tariff_code: code,
                 from_location: 'Чебоксары, ул. Гражданская, 105',
@@ -240,7 +242,6 @@ const Checkout = observer(() => {
                                 } else {
                                     notify('error', "Ошибка! Проверьте адрес доставки");
                                 }
-                                setloadShipping(false);
                             })
                             .catch(err => {
                                 console.log(err);
@@ -269,7 +270,8 @@ const Checkout = observer(() => {
     }, []);
 
     const saveOrder = () => {
-        let isValid = formValidator(order);
+        let validatedForm = formValidator(order);
+        let isValid = validatedForm.status;
         if (isValid) {
             let orderData = {};
             orderData.name = order.name;
@@ -334,6 +336,7 @@ const Checkout = observer(() => {
                 .then(res => {
                     let result = res.data;
                     if (result.status) {
+                        store.changeOrderId(result.order_id);
                         if (paymentAfter) {
                             axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/notification?id=' + store.orderIdVal)
                                 .then(res => {
@@ -354,7 +357,6 @@ const Checkout = observer(() => {
                                 .finally(() => {
                                 });
                         } else {
-                            store.changeOrderId(result.order_id);
                             navigate('/payment');
                         }
                     } else {
@@ -368,9 +370,67 @@ const Checkout = observer(() => {
                 .finally(() => {
                 });
         } else {
-            notify('error', 'Заполните правильно все обязательные поля!');
+            if (validatedForm.errors.length < 2) {
+                notify('error', `Заполните правильно поле ${validatedForm.errors[0]}!`);
+            } else {
+                notify('error', `Заполните правильно поля:<br> <ul style="margin: 0; padding-left: 15px;">${validatedForm.errors.map(el => "<li>" + el + "</li>").join('')}</ul>`);
+            }
         }
     }
+
+    React.useEffect(() => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/gh/cdek-it/widget@latest/dist/cdek-widget.umd.js';
+        document.head.appendChild(script);
+        script.onload = () => {
+            new window.CDEKWidget({
+                from: {
+                    country_code: 'RU',
+                    city: 'Чебоксары',
+                    address: 'ул. Гражданская, 95',
+                },
+                root: 'cdek-map',
+                apiKey: import.meta.env.VITE_APP_YMAPS_API_KEY,
+                canChoose: true,
+                servicePath: 'https://denpiligrim.ru/service.php',
+                hideFilters: {
+                  have_cashless: false,
+                  have_cash: false,
+                  is_dressing_room: false,
+                  type: false,
+                },
+                hideDeliveryOptions: {
+                  office: false,
+                  door: false,
+                },
+                debug: false,
+                goods: [
+                  {
+                    width: 10,
+                    height: 10,
+                    length: 10,
+                    weight: 10,
+                  },
+                ],
+                defaultLocation: [55.0415, 82.9346],
+                lang: 'rus',
+                currency: 'RUB',
+                tariffs: {
+                  office: [233, 137],
+                  door: [234, 136],
+                },
+                onReady() {
+                  console.log('Виджет загружен');
+                },
+                onCalculate() {
+                  console.log('Расчет стоимости доставки произведен');
+                },
+                onChoose() {
+                  console.log('Доставка выбрана');
+                },
+              });
+        };
+    }, []);
 
     return (
         <>
@@ -629,6 +689,9 @@ const Checkout = observer(() => {
                                             />
                                         </RadioGroup>
                                     </FormControl>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <div id="cdek-map"></div>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <Button variant="contained" size="small" sx={{ color: 'white' }} onClick={calcDelivery}>

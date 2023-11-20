@@ -14,6 +14,22 @@ export default function Search() {
   const [inputValue, setInputValue] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [options, setOptions] = React.useState([]);
+  const input = React.useRef(null);
+  const [inpWidth, setInpWidth] = React.useState(0);
+  const [inpLeft, setInpLeft] = React.useState(0);
+  const [inpTop, setInpTop] = React.useState(0);
+
+  const newWidth = () => {
+    setTimeout(() => {      
+      const width = input.current.clientWidth;
+      const left = input.current.getBoundingClientRect().left;
+      const top = input.current.getBoundingClientRect().bottom + 2;
+      console.log(left);
+      setInpWidth(width);
+      setInpLeft(left);
+      setInpTop(top);
+    }, 500);
+  }
 
   const fetch = React.useMemo(
     () =>
@@ -73,11 +89,26 @@ export default function Search() {
   return (
     <Autocomplete
       id="search-catalog"
-      sx={{ width: 300, '& .MuiAutocomplete-popupIndicator': { transform: 'none' } }}
+      sx={{ 
+        width: 300, 
+        '& .MuiAutocomplete-popupIndicator': { 
+          transform: 'none' 
+        }
+        }}
       getOptionLabel={(option) =>
         typeof option === 'string' ? option : option.name
       }
       filterOptions={(x) => x}
+      slotProps={{
+        popper: {
+          sx: {
+            width: inpWidth + "px !important",
+            transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+            transform: `translate(${inpLeft}px, ${inpTop}px) !important`
+          }
+        }
+      }}
+      onOpen={newWidth}
       options={options}
       autoComplete
       includeInputInList
@@ -109,12 +140,13 @@ export default function Search() {
               "&:focus-within": {
                 width: '100%',
                 transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
-              },
+              },              
               "& .MuiOutlinedInput-notchedOutline": {
                 height: '54px'
               }
             }}
             placeholder='Найти'
+            ref={input}
           />
         </FormControl>
       )}

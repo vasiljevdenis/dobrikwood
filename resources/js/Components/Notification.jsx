@@ -17,7 +17,7 @@ const Notification = observer(() => {
     return (
         <Snackbar open={store.snackbarOpen} autoHideDuration={5000} onClose={(event, reason) => handleClose(reason)}>
             <Alert onClose={(event, reason) => handleClose(reason)} severity={store.snackbarSeverity}>
-                {store.snackbarText}
+                <div dangerouslySetInnerHTML={{__html: store.snackbarText}}></div>
             </Alert>
         </Snackbar>
     );
