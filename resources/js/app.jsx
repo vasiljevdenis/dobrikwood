@@ -29,6 +29,7 @@ import Contact from './Pages/Contact';
 import Reviews from './Pages/Reviews';
 import CustomOrder from './Components/CustomOrder';
 import ToTopBtn from './Components/ToTopBtn';
+import Privacy from './Pages/Privacy';
 
 const newTheme = createTheme({
   palette: {
@@ -97,6 +98,7 @@ ReactDOM.createRoot(document.getElementById('app')).render(
             <Route path='/payment' element={<Payment />} />
             <Route path='/success' element={<Success />} />
             <Route path='/fail' element={<Fail />} />
+            <Route path='/privacy-policy' element={<Privacy />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
         </Grid>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
+
 class CdekService extends Controller
 {
     /**
@@ -76,44 +78,37 @@ class CdekService extends Controller
 
     private function httpRequest($method, $data, $useFormData = false, $useJson = false)
     {
-        $ch = curl_init("$this->baseUrl/$method");
-
-        $headers = array (
-            'Accept: application/json',
-        );
+        $client = Http::withUserAgent('widget/2.0')->acceptJson();
 
         if ($this->authToken) {
-            $headers[] = "Authorization: Bearer $this->authToken";
+            $client = $client->withToken($this->authToken);
         }
 
         if ($useFormData) {
-            curl_setopt_array($ch, array(
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => $data,
-            ));
+            $client = $client->withHeaders([
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ])->asForm();
         } elseif ($useJson) {
-            $headers[] = 'Content-Type: application/json';
-            curl_setopt_array($ch, array(
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => json_encode($data),
-            ));
+            $client = $client->withHeaders([
+                'Content-Type' => 'application/json',
+            ])->asJson();
         } else {
-            curl_setopt($ch, CURLOPT_URL, "$this->baseUrl/$method?" . http_build_query($data));
+            $client = $client->withQueryParameters($data);
         }
 
-        curl_setopt_array($ch, array(
-            CURLOPT_USERAGENT => 'widget/2.0',
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_RETURNTRANSFER => true,
-        ));
+        $result = [];
 
-        $result = curl_exec($ch);
-
-        if ($result === false) {
-            throw new RuntimeException(curl_error($ch), curl_errno($ch));
+        if ($useFormData || $useJson) {
+            $result = $client->post("$this->baseUrl/$method", $data);
+        } else {
+            $result = $client->get("$this->baseUrl/$method");
         }
 
-        return $result;
+        if (!$result->ok()) {
+            $result->throw();
+        }
+
+        return $result->body();
     }
 
     private function sendResponse($data)

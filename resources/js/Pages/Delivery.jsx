@@ -31,7 +31,7 @@ const Delivery = () => {
             <Typography variant="h4" component="h2" m={2}>
             {state.title}
             </Typography>
-            <Typography variant="body1" component="p" mx={2} gutterBottom dangerouslySetInnerHTML={{ __html: state.text.slice(0, state.text.indexOf('<h2>')) }}>                
+            <Typography variant="body1" component="p" mx={2} gutterBottom dangerouslySetInnerHTML={{ __html: state.text.slice(0, state.text.indexOf('<h3>')) }}>                
             </Typography>
             <Box sx={{ width: '100%', textAlign: 'center' }}>
                 <img src={state.image} alt={state.title} style={{
@@ -40,7 +40,7 @@ const Delivery = () => {
                     margin: 1
                 }} />
             </Box>
-            <Typography variant="body1" component="p" mx={2} gutterBottom dangerouslySetInnerHTML={{ __html: state.text.slice(state.text.indexOf('<h2>')) }}>
+            <Typography variant="body1" component="p" mx={2} gutterBottom dangerouslySetInnerHTML={{ __html: state.text.slice(state.text.indexOf('<h3>')) }}>
             </Typography>
         </>
     )

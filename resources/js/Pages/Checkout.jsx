@@ -383,6 +383,16 @@ const Checkout = observer(() => {
         script.src = 'https://cdn.jsdelivr.net/gh/cdek-it/widget@latest/dist/cdek-widget.umd.js';
         document.head.appendChild(script);
         script.onload = () => {
+            const packages = Object.values(cartState.goods).map(item => {
+                const obj = {
+                    weight: item.weight,
+                    length: item.length,
+                    width: item.width,
+                    height: item.height
+                };
+                const arr = Array.from({length: item.count}, () => Object.assign({}, obj));
+                return arr;
+            }).flat();
             new window.CDEKWidget({
                 from: {
                     country_code: 'RU',
@@ -390,44 +400,39 @@ const Checkout = observer(() => {
                     address: 'ул. Гражданская, 95',
                 },
                 root: 'cdek-map',
-                apiKey: import.meta.env.VITE_APP_YMAPS_API_KEY,
-                canChoose: true,
-                servicePath: 'https://denpiligrim.ru/service.php',
-                hideFilters: {
-                  have_cashless: false,
-                  have_cash: false,
-                  is_dressing_room: false,
-                  type: false,
-                },
-                hideDeliveryOptions: {
-                  office: false,
-                  door: false,
-                },
-                debug: false,
-                goods: [
-                  {
-                    width: 10,
-                    height: 10,
-                    length: 10,
-                    weight: 10,
-                  },
-                ],
-                defaultLocation: [55.0415, 82.9346],
-                lang: 'rus',
-                currency: 'RUB',
                 tariffs: {
-                  office: [233, 137],
-                  door: [234, 136],
-                },
-                onReady() {
-                  console.log('Виджет загружен');
-                },
-                onCalculate() {
-                  console.log('Расчет стоимости доставки произведен');
-                },
-                onChoose() {
-                  console.log('Доставка выбрана');
-                },
+                    office: [136, 234],
+                    door: [137, 233],
+                    pickup: [368, 378]
+                  },
+                apiKey: import.meta.env.VITE_APP_YMAPS_API_KEY,
+                servicePath: '/api/cdek/service',
+                goods: packages,
+                defaultLocation: [37.610431, 55.759500],
+                onChoose: (type, tariff, address) => {
+                    console.log(type);
+                    console.log(tariff);
+                    console.log(address);
+                    let courier = false;
+                    let city = "";
+                    let street = "";
+                    let house = "";
+                    let apartment = "";
+                    if (type === "door") {
+                        courier = true;
+                        address.components.forEach(el => {
+                            if (el.kind === "locality") city = el.name;
+                            if (el.kind === "street") street = el.name;
+                            if (el.kind === "house") house = el.name;
+                        });
+                    } else {
+                        courier = false;
+                        city = address.city;
+                        street = address.address.split(',')[0].trim();
+                        house = address.address.split(',')[1].trim();
+                    }
+                    setOrder({ ...order, city: city, street: street, house: house, apartment: apartment, cdek: {code: tariff.tariff_code}, courier: courier, delivery_sum: Math.ceil(tariff.delivery_sum * 1.1), delivery_days: tariff.period_min === tariff.period_max ? [tariff.period_min] : [tariff.period_min, tariff.period_max] });
+                }
               });
         };
     }, []);
@@ -596,56 +601,7 @@ const Checkout = observer(() => {
                             </Tooltip>
                         </Grid>
                         {order.delivery ? (
-                            <>
-                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                    <YMaps
-                                        enterprise
-                                        query={{
-                                            apikey: import.meta.env.VITE_APP_YMAPS_API_KEY,
-                                            suggest_apikey: import.meta.env.VITE_APP_YMAPS_SUGGEST_API_KEY
-                                        }}
-                                    >
-                                        <SuggestComponent />
-                                    </YMaps>
-                                </Grid>
-                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                    <TextField
-                                        label="Улица"
-                                        value={order.street}
-                                        onChange={(event) => changeStreet(event.target.value)}
-                                        variant="outlined"
-                                        required
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: '250px'
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                    <TextField
-                                        label="Дом"
-                                        value={order.house}
-                                        onChange={(event) => changeHouse(event.target.value)}
-                                        variant="outlined"
-                                        required
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: '250px'
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} md={6} py={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                                    <TextField
-                                        label="Квартира"
-                                        value={order.apartment}
-                                        onChange={(event) => changeApartment(event.target.value)}
-                                        variant="outlined"
-                                        sx={{
-                                            width: '100%',
-                                            maxWidth: '250px'
-                                        }}
-                                    />
-                                </Grid>
+                            <>                                
                                 <Grid item xs={12} md={6} py={1} sx={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -668,35 +624,9 @@ const Checkout = observer(() => {
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={12} md={6} py={1}>
-                                    <FormControl>
-                                        <RadioGroup
-                                            aria-labelledby="courier-label"
-                                            name="courier"
-                                        >
-                                            <FormControlLabel
-                                                checked={!order.courier}
-                                                onChange={() => changeCourier(false)}
-                                                control={<Radio />}
-                                                label="Пункт выдачи"
-                                                labelPlacement="end"
-                                            />
-                                            <FormControlLabel
-                                                checked={order.courier}
-                                                onChange={() => changeCourier(true)}
-                                                control={<Radio />}
-                                                label="Курьером до двери"
-                                                labelPlacement="end"
-                                            />
-                                        </RadioGroup>
-                                    </FormControl>
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <div id="cdek-map"></div>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
-                                    <Button variant="contained" size="small" sx={{ color: 'white' }} onClick={calcDelivery}>
-                                        {loadShipping ? <CircularProgress sx={{ color: 'white' }} size={20} /> : "Рассчитать стоимость"}
-                                    </Button>
+                                <Grid item xs={12} py={2}>
+                                    <div id="cdek-map" style={{width: "100%", height: 500}}></div>
                                 </Grid>
                             </>
                         ) : (
@@ -704,7 +634,7 @@ const Checkout = observer(() => {
                                 <Alert severity="info">Самовывоз доступен только из города Чебоксары Чувашской Республики</Alert>
                             </Grid>
                         )}
-                        <Grid item xs={12} pt={3} pb={1} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                        <Grid item xs={12} pt={9} pb={1} sx={{ pt: {xs: 9, sm: 6}, textAlign: { xs: 'center', md: 'left' } }}>
                             <TextareaAutosize
                                 rows={1}
                                 placeholder='Примечание'
@@ -764,8 +694,8 @@ const Checkout = observer(() => {
                                     <Divider component="li" />
                                     <ListItem>
                                         <ListItemText
-                                            primary={(order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи') + (order.delivery_days.length > 0 ? ' (' : '') + getDaysDelivery(order.delivery_days) + (order.delivery_days.length > 0 ? ')' : '')}
-                                            secondary={order.delivery_sum === 0 ? <Button variant="text" size="small" onClick={calcDelivery}>{loadShipping ? <CircularProgress color="primary" size={20} /> : "Рассчитать"}</Button> : order.delivery_sum.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
+                                            primary={(order.courier ? 'Доставка до двери' : 'Доставка до пункта выдачи/постамата') + (order.delivery_days.length > 0 ? ' (' : '') + getDaysDelivery(order.delivery_days) + (order.delivery_days.length > 0 ? ')' : '')}
+                                            secondary={order.delivery_sum === 0 ? "Укажите адрес доставки" : order.delivery_sum.toString().replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' ₽'}
                                             sx={{
                                                 "& span": {
                                                     fontFamily: 'FuturaPTDemi, sans-serif'

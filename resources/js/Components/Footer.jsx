@@ -227,8 +227,12 @@ const Footer = observer(() => {
           </Tooltip>
         </Stack>
         <br />
-        <Link variant='body2' sx={{ color: '#212529' }} justifyContent={'center'} component={RouterLink} to="/" underline="none">
+        <Link variant='body2' sx={{ color: '#212529' }} justifyContent={'center'} component={RouterLink} to="/privacy-policy" underline="none">
           Политика обработки персональных данных
+        </Link>
+        <br />
+        <Link variant='body2' sx={{ color: '#212529' }} justifyContent={'center'} component={RouterLink} to="https://companies.rbc.ru/persons/ogrnip/323210000024558-pigavaev-andrej-nikolaevich/" underline="none">
+        ИП Пигаваев А.Н.
         </Link>
       </Grid>
     </Grid>
