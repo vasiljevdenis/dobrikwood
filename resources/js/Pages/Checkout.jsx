@@ -1,17 +1,18 @@
-import { Alert, Box, Button, Checkbox, CircularProgress, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, RadioGroup, Select, TextField, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Radio, Select, TextField, Tooltip, Typography } from "@mui/material";
 import * as React from "react";
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import TextareaAutosize from "react-autosize-textarea";
 import { observer } from "mobx-react-lite";
 import appState from "../store/appState";
 import PaymentIcon from '@mui/icons-material/Payment';
 import CheckIcon from '@mui/icons-material/Check';
-import { YMaps, withYMaps } from "@pbe/react-yandex-maps";
+import { withYMaps } from "@pbe/react-yandex-maps";
 import getDaysDelivery from "../helpers/getDaysDelivery";
 import streetVariations from "../helpers/streetVariations";
 import formValidator from "../helpers/formValidator";
 import ReactInputMask from "react-input-mask";
+import CdekMap from "../Components/CdekMap";
 
 const MapSuggestComponent = observer((props) => {
     const [store] = React.useState(appState);
@@ -145,7 +146,6 @@ const Checkout = observer(() => {
 
     const changeStreet = (val) => {
         setOrder({ ...order, street: val });
-
     }
 
     const changeHouse = (val) => {
@@ -378,65 +378,6 @@ const Checkout = observer(() => {
         }
     }
 
-    React.useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/gh/cdek-it/widget@latest/dist/cdek-widget.umd.js';
-        document.head.appendChild(script);
-        script.onload = () => {
-            const packages = Object.values(cartState.goods).map(item => {
-                const obj = {
-                    weight: item.weight,
-                    length: item.length,
-                    width: item.width,
-                    height: item.height
-                };
-                const arr = Array.from({length: item.count}, () => Object.assign({}, obj));
-                return arr;
-            }).flat();
-            new window.CDEKWidget({
-                from: {
-                    country_code: 'RU',
-                    city: 'Чебоксары',
-                    address: 'ул. Гражданская, 95',
-                },
-                root: 'cdek-map',
-                tariffs: {
-                    office: [136, 234],
-                    door: [137, 233],
-                    pickup: [368, 378]
-                  },
-                apiKey: import.meta.env.VITE_APP_YMAPS_API_KEY,
-                servicePath: '/api/cdek/service',
-                goods: packages,
-                defaultLocation: [37.610431, 55.759500],
-                onChoose: (type, tariff, address) => {
-                    console.log(type);
-                    console.log(tariff);
-                    console.log(address);
-                    let courier = false;
-                    let city = "";
-                    let street = "";
-                    let house = "";
-                    let apartment = "";
-                    if (type === "door") {
-                        courier = true;
-                        address.components.forEach(el => {
-                            if (el.kind === "locality") city = el.name;
-                            if (el.kind === "street") street = el.name;
-                            if (el.kind === "house") house = el.name;
-                        });
-                    } else {
-                        courier = false;
-                        city = address.city;
-                        street = address.address.split(',')[0].trim();
-                        house = address.address.split(',')[1].trim();
-                    }
-                    setOrder({ ...order, city: city, street: street, house: house, apartment: apartment, cdek: {code: tariff.tariff_code}, courier: courier, delivery_sum: Math.ceil(tariff.delivery_sum * 1.1), delivery_days: tariff.period_min === tariff.period_max ? [tariff.period_min] : [tariff.period_min, tariff.period_max] });
-                }
-              });
-        };
-    }, []);
-
     return (
         <>
             <Typography variant="h4" component="h2" m={2}>
@@ -626,7 +567,7 @@ const Checkout = observer(() => {
                                 <Grid item xs={12} md={6} py={1}>
                                 </Grid>
                                 <Grid item xs={12} py={2}>
-                                    <div id="cdek-map" style={{width: "100%", height: 500}}></div>
+                                    <CdekMap cartState={cartState} order={order} setOrder={setOrder} />
                                 </Grid>
                             </>
                         ) : (
