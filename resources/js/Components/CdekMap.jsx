@@ -24,20 +24,21 @@ function CdekMap({ cartState, order, setOrder }) {
             street = address.address.split(',')[0].trim();
             house = address.address.split(',')[1].trim();
         }
-        const newOrder = {
-            ...order,
-            city: city,
-            street: street,
-            house: house,
-            apartment: apartment,
-            cdek: {
-                code: tariff.tariff_code
-            },
-            courier: courier,
-            delivery_sum: Math.ceil(tariff.delivery_sum * 1.1),
-            delivery_days: tariff.period_min === tariff.period_max ? [tariff.period_min] : [tariff.period_min, tariff.period_max]
-        };
-        setOrder(newOrder);
+        setOrder((order) => {
+            return {
+                ...order,
+                city: city,
+                street: street,
+                house: house,
+                apartment: apartment,
+                cdek: {
+                    code: tariff.tariff_code
+                },
+                courier: courier,
+                delivery_sum: Math.ceil(tariff.delivery_sum * 1.1),
+                delivery_days: tariff.period_min === tariff.period_max ? [tariff.period_min] : [tariff.period_min, tariff.period_max]
+            }
+        });
     }
 
     useEffect(() => {

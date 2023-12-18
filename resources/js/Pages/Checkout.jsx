@@ -114,7 +114,6 @@ const Checkout = observer(() => {
             code: 136
         }
     });
-    const [paymentAfter, setPaymentAfter] = React.useState(false);
 
     const changeType = (val) => {
         setOrder({ ...order, type: val });
@@ -177,9 +176,6 @@ const Checkout = observer(() => {
         setOrder({ ...order, recipient: { ...order.recipient, lastName: val.slice(0, 1).toUpperCase() + val.slice(1) } });
     }
 
-    const changeAfterPayment = () => {
-        setPaymentAfter(!paymentAfter);
-    }
     const changeRecipientPhone = (val) => {
         setOrder({ ...order, recipient: { ...order.recipient, phone: val } });
     }
@@ -337,28 +333,7 @@ const Checkout = observer(() => {
                     let result = res.data;
                     if (result.status) {
                         store.changeOrderId(result.order_id);
-                        if (paymentAfter) {
-                            axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/notification?id=' + store.orderIdVal)
-                                .then(res => {
-                                    axios.get(import.meta.env.VITE_APP_BASE_URL + '/api/order/mail?id=' + store.orderIdVal)
-                                        .then(res => {
-                                            let result = res.data;
-                                            navigate('/success', { state: { prevPath: location.pathname } });
-                                        })
-                                        .catch(err => {
-                                        })
-
-                                        .finally(() => {
-                                        });
-                                })
-                                .catch(err => {
-                                })
-
-                                .finally(() => {
-                                });
-                        } else {
-                            navigate('/payment');
-                        }
+                        navigate('/payment');
                     } else {
                         notify('error', result.message);
                     }
@@ -656,11 +631,8 @@ const Checkout = observer(() => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={9} p={1} textAlign={'center'}>
-                    <FormGroup>
-                        <FormControlLabel control={<Checkbox checked={paymentAfter ? true : false} onClick={changeAfterPayment} />} label="Оплатить после получения заказа" />
-                    </FormGroup>
-                    <Button disabled={order.delivery && order.delivery_sum === 0 ? true : false} variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={paymentAfter ? <CheckIcon /> : <PaymentIcon />}>
-                        {paymentAfter ? "Оформить заказ" : "Перейти к оплате"}
+                    <Button disabled={order.delivery && order.delivery_sum === 0 ? true : false} variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
+                        Перейти к оплате
                     </Button>
                 </Grid>
             </Grid>
