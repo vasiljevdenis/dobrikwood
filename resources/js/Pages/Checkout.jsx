@@ -201,7 +201,7 @@ const Checkout = observer(() => {
                 code = 234;
             } else if (totalWeight > 30000 && totalWeight <= 50000 && order.courier) {
                 code = 233;
-            }            
+            }
             const packages = Object.values(cartState.goods).map(item => {
                 const obj = {
                     weight: item.weight * 1000,
@@ -209,7 +209,7 @@ const Checkout = observer(() => {
                     width: item.width,
                     height: item.height
                 };
-                const arr = Array.from({length: item.count}, () => Object.assign({}, obj));
+                const arr = Array.from({ length: item.count }, () => Object.assign({}, obj));
                 return arr;
             }).flat();
             axios.post(import.meta.env.VITE_APP_BASE_URL + '/api/calculator', {
@@ -517,7 +517,7 @@ const Checkout = observer(() => {
                             </Tooltip>
                         </Grid>
                         {order.delivery ? (
-                            <>                                
+                            <>
                                 <Grid item xs={12} md={6} py={1} sx={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -550,7 +550,7 @@ const Checkout = observer(() => {
                                 <Alert severity="info">Самовывоз доступен только из города Чебоксары Чувашской Республики</Alert>
                             </Grid>
                         )}
-                        <Grid item xs={12} pt={9} pb={1} sx={{ pt: {xs: 9, sm: 6}, textAlign: { xs: 'center', md: 'left' } }}>
+                        <Grid item xs={12} pt={9} pb={1} sx={{ pt: { xs: 9, sm: 6 }, textAlign: { xs: 'center', md: 'left' } }}>
                             <TextareaAutosize
                                 rows={1}
                                 placeholder='Примечание'
@@ -634,6 +634,9 @@ const Checkout = observer(() => {
                     <Button disabled={order.delivery && order.delivery_sum === 0 ? true : false} variant="contained" onClick={saveOrder} sx={{ color: 'white' }} endIcon={<PaymentIcon />}>
                         Перейти к оплате
                     </Button>
+                </Grid>
+                <Grid item xs={12} md={9} p={1} textAlign={'center'}>
+                    <Alert severity="info">Оформляя заказ, Вы соглашаетесь с <a href="/privacy-policy" target="_blank">Политикой обработки персональных данных</a></Alert>
                 </Grid>
             </Grid>
         </>
