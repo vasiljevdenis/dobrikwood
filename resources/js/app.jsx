@@ -15,7 +15,7 @@ import Horizontalbar from './Components/Horizontalbar';
 import Catalog from './Pages/Catalog';
 import Category from './Pages/Category';
 import Product from './Pages/Product';
-import AppState from './store/AppState';
+import AppState from './Components/AppState';
 import Cart from './Pages/Cart';
 import Checkout from './Pages/Checkout';
 import Notification from './Components/Notification';

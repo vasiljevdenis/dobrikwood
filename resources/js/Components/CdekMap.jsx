@@ -44,7 +44,7 @@ function CdekMap({ cartState, order, setOrder }) {
     useEffect(() => {
         if (!map) {
             const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/gh/cdek-it/widget@latest/dist/cdek-widget.umd.js';
+            script.src = 'https://cdn.jsdelivr.net/npm/@cdek-it/widget@3';
             document.head.appendChild(script);
             script.onload = () => {
                 const packages = Object.values(cartState.goods).map(item => {
